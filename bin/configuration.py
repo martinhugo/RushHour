@@ -9,14 +9,19 @@ class Configuration:
         self.vehicules = list(vehicules)
         self.nbCoupMax = nbCoupMax
 
-    def setNbCoupMax(value):
+    def setNbCoupMax(self, value):
         """ Modifie la valeur de self.nbCcoupMax """
         self.nbCoupMax = value
 
-    def setVehicules(vehicules):
+    def setVehicules(self, vehicules):
         """ Modifie la valeur de self.nbCoupMax """
         self.vehicules = list(vehicules)
 
+    def getVehicules(self):
+        """ Retourne self.vehicules """
+        return self.vehicules 
+
+    @staticmethod
     def lireFichier(path):
         with open(path, "r") as file:
             content = file.read()
@@ -32,36 +37,45 @@ class Configuration:
         #
         # Si on rencontre la lettre 'g', on créé une voiture selon la même méthode.
         # Première version: Peut comporter bugs et incohérences.
-        content = [word for word in content.split([" ", "\n"])]
+
+        content = [word for line in content.split("\n") for word in line.split(" ") if len(word)>0]
+        print(content)
         voitures, camions  = {}, {}
 
-        for i, word in range(len(content)), content:
-            if len(word)>2 or word[0] == "g":
+        for i in range(len(content)):
+            word = content[i]
+            if len(word)>1 or word[0] == "g":
                 
-                key = word[1]
                 goodDico = voitures
                 typeVehicule = TypeVehicule.VOITURE
 
-                if word[0] == "t": 
-                    goodDico = camions
-                    typeVehicule = TypeVehicule.CAMION
-                elif word[0] == "g":
+                if word[0] == "g":
                     key = word[0]
-
+                else:
+                    key = word[1]
+                    if word[0] == "t":
+                        goodDico = camions
+                        typeVehicule = TypeVehicule.CAMION
+                
 
                 if key not in goodDico.keys():
                     goodDico[key] = Vehicule(i, typeVehicule, Orientation.DROITE)
 
-                else if (goodDico[key].getMarqueur() / i) == 6:
+                elif (goodDico[key].getMarqueur() / i) == 6:
                     goodDico[key].setOrientation(Orientation.BAS)
+
 
         result = list(voitures.values())
         result.extend(list(camions.values()))
         
-        self.vehicules = result
+        return Configuration(result)
 
 
-
+if __name__ == "__main__":
+    conf = Configuration.lireFichier("../puzzles/débutant/jam1.txt")
+    for vehicule in conf.getVehicules():
+        print(vehicule)
+    print("Nb Vehicules: ", len(conf.getVehicules()))
 
 
 

@@ -27,6 +27,12 @@ class Vehicule:
         """ Modifie l'orientation du véhicule """
         self.orientation = orientation 
 
+    def __str__(self):
+        return str((self.marqueur, self.typeVehicule, self.orientation))
+
+    def __repr__(self):
+        return str(self)
+        
 class TypeVehicule(Enum):
     """ Répresente le type du véhicule considéré """
     VOITURE = 2

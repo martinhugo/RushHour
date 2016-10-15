@@ -19,9 +19,13 @@ class Vehicule:
         """ Retourne le type du véhicule (VOITURE: 2, CAMION: 3) """
         return self.typeVehicule
 
-    def orientation(self):
+    def getOrientation(self):
         """ Retourne l'orientation du véhicule (DROITE: 1, BAS: 6) """
         return self.orientation
+
+    def setOrientation(self, orientation):
+        """ Modifie l'orientation du véhicule """
+        self.orientation = orientation 
 
 class TypeVehicule(Enum):
     """ Répresente le type du véhicule considéré """

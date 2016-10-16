@@ -39,7 +39,6 @@ class Configuration:
         # Première version: Peut comporter bugs et incohérences.
 
         content = [word for line in content.split("\n") for word in line.split(" ") if len(word)>0]
-        print(content)
         voitures, camions  = {}, {}
 
         for i in range(len(content)):

@@ -12,7 +12,8 @@ import os
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QAction, QDialog, QFileDialog, QToolBar)
 from PyQt5.QtGui import QIcon
 
-
+import controller
+from dialogs import *
 
 # Images
 ADD_FILES_ICON = "../img/addFiles.png"
@@ -24,6 +25,7 @@ ADD_FILES_TIP = "Add files"
 START_TIP = "Start generation"
 SETTINGS_TIP = "Settings"
 
+WINDOW_TITLE = "RUSH HOUR"
 
 class Window (QMainWindow):
     """ This class is the main class of the application.
@@ -37,7 +39,11 @@ class Window (QMainWindow):
         """
         super().__init__()
         self.initScreen()
+        self.controller = controller.ConfigController(self)
 
+
+    def displayConfiguration(self, configuration):
+        print(configuration)
 
     def initScreen(self):
         """ This method sets up the documentation screen.
@@ -46,7 +52,7 @@ class Window (QMainWindow):
             Return: None
         """
         self.createToolBar()
-        self.setWindowTitle("RUSH HOUR")
+        self.setWindowTitle(WINDOW_TITLE)
         self.setGeometry(100,100, 1200, 600)
         self.show()
 
@@ -66,12 +72,23 @@ class Window (QMainWindow):
         # resolveAction.setShortcut('Ctrl+K')
 
         settingsAction=QAction(QIcon(SETTINGS_ICON), SETTINGS_TIP, self)
+        settingsAction.triggered.connect(self.settings)
         # settingsAction.setShortcut('Ctrl+L')
         
         self.addToolBar(self.toolbar);
         self.toolbar.addAction(addFileAction)
         self.toolbar.addAction(resolveAction)
         self.toolbar.addAction(settingsAction)
+
+
+    def settings(self):
+        """ Object method
+            Params: none
+            Return: none
+            Opens a settings dialog.
+        """
+        settingsDialog = SettingsDialog(self)
+        settingsDialog.exec_()
 
 
     def fileSelectDialog(self):
@@ -85,7 +102,7 @@ class Window (QMainWindow):
 
         if file_dialog.exec_() :
             print(file_dialog.selectedFiles())
-	        # self._files.addFiles(file_dialog.selectedFiles())
+            self.controller.createInitialConfiguration(file_dialog.selectedFiles()[0])
 
 
 

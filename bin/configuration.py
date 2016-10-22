@@ -1,12 +1,14 @@
 # -*- coding: utf-8 -*-
 
 from vehicule import *
+import math
 """ Contient l'ensemble des classes et types nécessaire à la representation d'une configuration dans le jeu RushHour. """
 
 class Configuration:
 
     def __init__(self, vehicules = [], nbCoupMax = 0):
         self.vehicules = list(vehicules)
+        self.constructConfiguration()
         self.nbCoupMax = nbCoupMax
 
     def setNbCoupMax(self, value):
@@ -21,11 +23,53 @@ class Configuration:
         """ Retourne self.vehicules """
         return self.vehicules 
 
+    def constructConfiguration(self):
+
+        configuration = [(0, 0, 0) for i in range(36)]
+        for vehicule in self.vehicules:
+            marqueur = vehicule.getMarqueur()
+            orientation = vehicule.getOrientation()
+            typeVehicule = vehicule.getTypeVehicule()
+            for i in range(marqueur, marqueur+ (orientation*typeVehicule), orientation):
+                configuration[i] = vehicule
+
+        self.configuration = configuration
+
     @staticmethod
-    def lireFichier(path):
+    def readFile(path):
         with open(path, "r") as file:
             content = file.read()
 
+
+        content = [word for line in content.split("\n") for word in line.split(" ") if len(word)>0]
+        line, col = content[:2]
+        content = content[2:]
+        vehicules = Configuration.constructVehicules(content)
+        return Configuration(vehicules)
+
+    def __str__(self):
+        i = 1
+        content = ""
+        for el in self.configuration:
+            content += str(el) + "\t"
+            if(i%6 == 0): 
+                content += "\n"
+            i += 1
+
+        return content
+
+
+    def __repr__(self):
+        return str(self)
+
+
+
+        
+
+
+
+    @staticmethod
+    def constructVehicules(content):
         # Idée:
         # Creer une liste de 36 mots. Parcourir uniquement cette liste et deux dictionnaires vides voitures camions.
         #
@@ -38,7 +82,6 @@ class Configuration:
         # Si on rencontre la lettre 'g', on créé une voiture selon la même méthode.
         # Première version: Peut comporter bugs et incohérences.
 
-        content = [word for line in content.split("\n") for word in line.split(" ") if len(word)>0]
         voitures, camions  = {}, {}
 
         for i in range(len(content)):
@@ -55,27 +98,26 @@ class Configuration:
                     if word[0] == "t":
                         goodDico = camions
                         typeVehicule = TypeVehicule.CAMION
-                
 
                 if key not in goodDico.keys():
                     goodDico[key] = Vehicule(i, typeVehicule, Orientation.DROITE)
 
-                elif (goodDico[key].getMarqueur() / i) == 6:
-                    goodDico[key].setOrientation(Orientation.BAS)
+                elif (abs(goodDico[key].getMarqueur() - i) == 6):
+                        goodDico[key].setOrientation(Orientation.BAS)
+
 
 
         result = list(voitures.values())
         result.extend(list(camions.values()))
         
-        return Configuration(result)
+        return result
+
 
 
 if __name__ == "__main__":
-    conf = Configuration.lireFichier("../puzzles/débutant/jam1.txt")
-    for vehicule in conf.getVehicules():
-        print(vehicule)
-    print("Nb Vehicules: ", len(conf.getVehicules()))
-
+    conf = Configuration.readFile("../puzzles/avancé/jam30.txt")
+    print(conf)
+    
 
 
 

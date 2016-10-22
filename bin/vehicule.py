@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from enum import Enum
+
 
 """ Contient l'ensemble des classes et types nécessaire à la representation des véhicules dans le jeu RushHour. """
 
@@ -33,12 +33,12 @@ class Vehicule:
     def __repr__(self):
         return str(self)
         
-class TypeVehicule(Enum):
+class TypeVehicule:
     """ Répresente le type du véhicule considéré """
     VOITURE = 2
     CAMION = 3
 
-class Orientation(Enum):
+class Orientation:
     """ Répresente l'orientation du véhicule considéré """
     DROITE = 1
     BAS = 6

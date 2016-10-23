@@ -9,8 +9,8 @@
 import sys
 import os
 
-from PyQt5.QtWidgets import (QApplication, QMainWindow, QAction, QDialog, QFileDialog, QToolBar)
-from PyQt5.QtGui import QIcon
+from PyQt5.QtWidgets import (QApplication, QMainWindow, QAction, QDialog, QFileDialog, QToolBar, QVBoxLayout, QLabel, QHBoxLayout)
+from PyQt5.QtGui import QIcon, QPixmap
 
 import controller
 from dialogs import *
@@ -19,6 +19,26 @@ from dialogs import *
 ADD_FILES_ICON = "../img/addFiles.png"
 START_ICON = "../img/start.png"
 SETTINGS_ICON = "../img/settings.png"
+
+MUR_PARKING = "../img/MurParking.png"
+PARKING = "../img/parkingBase.png"
+VOITURE = "../img/voiture.png"
+VOITURE_A_SORTIR = "../img/voitureASortir.png"
+CAMION = "../img/camion.png"
+
+# width and height
+WINDOW_WIDTH = 1000
+WINDOW_HEIGHT = 600
+
+IMAGE_SIZE_MUR_PARKING = 500
+MARGIN_HEIGHT_MUR_PARKING = (WINDOW_HEIGHT - IMAGE_SIZE_MUR_PARKING) / 2
+MARGIN_WIDTH_MUR_PARKING = (WINDOW_WIDTH - IMAGE_SIZE_MUR_PARKING) / 2
+
+IMAGE_SIZE_PARKING = 464
+MARGIN_HEIGHT_PARKING = (WINDOW_HEIGHT - IMAGE_SIZE_PARKING) / 2
+MARGIN_WIDTH_PARKING = (WINDOW_WIDTH - IMAGE_SIZE_PARKING) / 2
+
+SIZE = 6
 
 # ToolTip
 ADD_FILES_TIP = "Add files"
@@ -53,7 +73,8 @@ class Window (QMainWindow):
         """
         self.createToolBar()
         self.setWindowTitle(WINDOW_TITLE)
-        self.setGeometry(100,100, 1200, 600)
+        self.setGeometry(100,100, WINDOW_WIDTH, WINDOW_HEIGHT)
+        self.initImages()
         self.show()
 
 
@@ -103,7 +124,66 @@ class Window (QMainWindow):
         if file_dialog.exec_() :
             print(file_dialog.selectedFiles())
             self.controller.createInitialConfiguration(file_dialog.selectedFiles()[0])
+    
+    def initImages(self):
+        """ TO DO """
 
+        hbox = QHBoxLayout(self)
+
+        murParking = QPixmap(MUR_PARKING)
+        murParking = murParking.scaled(IMAGE_SIZE_MUR_PARKING, IMAGE_SIZE_MUR_PARKING)
+
+        labelMurParking = QLabel(self)
+        labelMurParking.setPixmap(murParking)        
+        labelMurParking.resize(murParking.width(),murParking.height())
+        labelMurParking.move(MARGIN_WIDTH_MUR_PARKING, MARGIN_HEIGHT_MUR_PARKING)
+
+        parking = QPixmap(PARKING)
+        parking = parking.scaled(IMAGE_SIZE_PARKING, IMAGE_SIZE_PARKING)
+
+        labelParking = QLabel(self)
+        labelParking.setPixmap(parking)        
+        labelParking.resize(parking.width(),parking.height())
+        labelParking.move(MARGIN_WIDTH_PARKING, MARGIN_HEIGHT_PARKING)
+
+        hbox.addWidget(labelMurParking)
+        hbox.addWidget(labelParking)
+        self.setLayout(hbox)
+
+
+    def printVehicles(self, listVehicles):
+        """ Version 1 ne fonctionnant pas encore """
+        
+        hbox = QHBoxLayout(self)
+
+        listLabel = []
+        for vehicle in range(len(listVehicles)):
+            label = QLabel(self)
+            pixmap = None
+            height = 0
+
+            # camion ou voiture
+            if(listVehicles[vehicle].getTypeVehicule == 2):
+                pixmap = QPixmap(VOITURE)
+                height = 2
+            else:
+                pixmap = QPixmap(CAMION)
+                height = 3
+
+            # image adaptée à la taille du reste
+            label.resize(IMAGE_SIZE_PARKING / SIZE, IMAGE_SIZE_PARKING * height/ SIZE)
+
+            # orientation
+            if(listVehicles[vehicle].getOrientation() == 1):
+                pixmap.rotate(-90)
+
+            # position sur la fenêtre
+            label.move(MARGIN_WIDTH_PARKING + ((listVehicles[vehicle].getMarqueur() - 1) % SIZE), MARGIN_HEIGHT_PARKING + round((listVehicles[vehicle].getMarqueur() - 1) / SIZE))
+            listLabel.append(label)
+
+        # ajout des images à la fenêtre
+        [hbox.addWidget(label) for label in listLabel]
+        # self.setLayout(hbox)
 
 
 def main():

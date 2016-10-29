@@ -9,7 +9,9 @@
 import sys
 import os
 
-from PyQt5.QtWidgets import (QApplication, QMainWindow, QAction, QDialog, QFileDialog, QToolBar, QVBoxLayout, QLabel, QHBoxLayout)
+from configuration import Configuration
+
+from PyQt5.QtWidgets import (QApplication, QMainWindow, QAction, QDialog, QFileDialog, QToolBar, QVBoxLayout, QLabel, QHBoxLayout, QWidget)
 from PyQt5.QtGui import QIcon, QPixmap
 
 import controller
@@ -31,8 +33,8 @@ WINDOW_WIDTH = 1000
 WINDOW_HEIGHT = 600
 
 IMAGE_SIZE_MUR_PARKING = 500
-MARGIN_HEIGHT_MUR_PARKING = (WINDOW_HEIGHT - IMAGE_SIZE_MUR_PARKING) / 2
 MARGIN_WIDTH_MUR_PARKING = (WINDOW_WIDTH - IMAGE_SIZE_MUR_PARKING) / 2
+MARGIN_HEIGHT_MUR_PARKING = (WINDOW_HEIGHT - IMAGE_SIZE_MUR_PARKING) / 2
 
 IMAGE_SIZE_PARKING = 464
 MARGIN_HEIGHT_PARKING = (WINDOW_HEIGHT - IMAGE_SIZE_PARKING) / 2
@@ -75,8 +77,7 @@ class Window (QMainWindow):
         self.setWindowTitle(WINDOW_TITLE)
         self.setGeometry(100,100, WINDOW_WIDTH, WINDOW_HEIGHT)
         self.initImages()
-        self.show()
-
+        # self.show()
 
     def createToolBar(self):
         """ Creates a ToolBar with 3 buttons: a file selector, a settings button and a start button. 
@@ -126,70 +127,87 @@ class Window (QMainWindow):
             self.controller.createInitialConfiguration(file_dialog.selectedFiles()[0])
     
     def initImages(self):
-        """ TO DO """
+        """ initialize and display the images on the window.
+            Params : None
+            Return : None
+        """
 
-        hbox = QHBoxLayout(self)
+        # affiche les deux images : le mur du parking et le parking, en les plaçant au centre de la fenêtre
+        self.newImage(MUR_PARKING, [IMAGE_SIZE_MUR_PARKING, IMAGE_SIZE_MUR_PARKING], [MARGIN_WIDTH_MUR_PARKING, MARGIN_HEIGHT_MUR_PARKING])
+        self.newImage(PARKING, [IMAGE_SIZE_PARKING, IMAGE_SIZE_PARKING], [MARGIN_WIDTH_PARKING, MARGIN_HEIGHT_PARKING])
 
-        murParking = QPixmap(MUR_PARKING)
-        murParking = murParking.scaled(IMAGE_SIZE_MUR_PARKING, IMAGE_SIZE_MUR_PARKING)
+    
+    def newImage(self, path, size = [], move = [], rotation = 0):
+        """ Create a new image which is added to the window
+            Params : 
+                - path : path of the image
+                - size : list of 2 elements [width, height]
+                - move : list of 2 elements [moveX, moveY]
+                - rotation : rotation of the image
+            Return : None
+        """
 
-        labelMurParking = QLabel(self)
-        labelMurParking.setPixmap(murParking)        
-        labelMurParking.resize(murParking.width(),murParking.height())
-        labelMurParking.move(MARGIN_WIDTH_MUR_PARKING, MARGIN_HEIGHT_MUR_PARKING)
+        image = QPixmap(path)
 
-        parking = QPixmap(PARKING)
-        parking = parking.scaled(IMAGE_SIZE_PARKING, IMAGE_SIZE_PARKING)
+        label = QLabel(self)
+        label.setPixmap(image)
 
-        labelParking = QLabel(self)
-        labelParking.setPixmap(parking)        
-        labelParking.resize(parking.width(),parking.height())
-        labelParking.move(MARGIN_WIDTH_PARKING, MARGIN_HEIGHT_PARKING)
+        if(size != []):
+            image = image.scaled(size[0], size[1])
+            label.resize(image.width(), image.height())
 
-        hbox.addWidget(labelMurParking)
-        hbox.addWidget(labelParking)
-        self.setLayout(hbox)
+        if(move != []):
+            label.move(move[0], move[1])
 
+        # if(rotation != 0):
+            # TO DO
 
     def printVehicles(self, listVehicles):
-        """ Version 1 ne fonctionnant pas encore """
-        
-        hbox = QHBoxLayout(self)
+        """ display the vehicles on the window.
+            Params : 
+                - listVehicles : list of vehicles to display
+            Return : None
+        """  
+        path = ""   
+        sizeCase = IMAGE_SIZE_PARKING/SIZE
 
-        listLabel = []
-        for vehicle in range(len(listVehicles)):
-            label = QLabel(self)
-            pixmap = None
+        for vehicle in listVehicles:
             height = 0
 
-            # camion ou voiture
-            if(listVehicles[vehicle].getTypeVehicule == 2):
-                pixmap = QPixmap(VOITURE)
+            # camion ou voiture ( ne prend pas en compte le fait que la voiture soit celle à déplacer ou pas : TO DO)
+            if(vehicle.getTypeVehicule() == 2):
+                path = VOITURE
                 height = 2
             else:
-                pixmap = QPixmap(CAMION)
+                path = CAMION
                 height = 3
 
-            # image adaptée à la taille du reste
-            label.resize(IMAGE_SIZE_PARKING / SIZE, IMAGE_SIZE_PARKING * height/ SIZE)
+            position = vehicle.getMarqueur()
+            positionX = position % SIZE
+            positionY = int(position / SIZE)
 
-            # orientation
-            if(listVehicles[vehicle].getOrientation() == 1):
-                pixmap.rotate(-90)
+            print(positionX, ", ", positionY)
 
-            # position sur la fenêtre
-            label.move(MARGIN_WIDTH_PARKING + ((listVehicles[vehicle].getMarqueur() - 1) % SIZE), MARGIN_HEIGHT_PARKING + round((listVehicles[vehicle].getMarqueur() - 1) / SIZE))
-            listLabel.append(label)
+            # rotation si le véhicule est orienté vers la droite: 
+            if(vehicle.getOrientation() == 1):
+                rotation = -90
 
-        # ajout des images à la fenêtre
-        [hbox.addWidget(label) for label in listLabel]
-        # self.setLayout(hbox)
+            self.newImage(path, [sizeCase, sizeCase * height], [positionX * sizeCase, positionY * sizeCase], rotation)
+
+    def updateWindow(self, newConfig):
+        """ TO DO """
+        pass
+            
 
 
 def main():
 #if __name__ == "__main__":
     app = QApplication(sys.argv);
     rushhour = Window();
+    config = Configuration.readFile("../puzzles/avancé/jam30.txt")
+    print(config)
+    rushhour.printVehicles(config.getVehicules())
+    rushhour.show() # temporaire le temps de faire une méthode mettant à jour les éléments à afficher et ceux à cacher
     sys.exit(app.exec_());
 
 main()

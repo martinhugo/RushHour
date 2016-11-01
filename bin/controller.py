@@ -7,6 +7,9 @@
 """
 
 from configuration import *
+from displayer import *
+import random
+
 
 class ConfigController:
     """ Permet toutes intéractions avec la configuration.
@@ -15,20 +18,50 @@ class ConfigController:
         Une fois le fichier de résolution produit, celui-ci créé l'ensemble des configurations à afficher et les envoi au modèle qui les affiche suivant les ordres de l'utilisateur.
     """
 
-    def __init__(self, window):
+    def __init__(self, window, nbMoveMax = 0, colors={}):
         self.mainWindow = window
-        self.resolutionType = "RAPTOR JESUS THE ONE WHO LOVES EVERYTHING"
+        self.resolutionType = ResolutionType.LINEAR_PROGRAMMING
+        self.nbMoveMax = nbMoveMax
+        self.colors = colors
 
-    def createInitialConfiguration(self, path):
+    def setConfiguration(self, path, initColors = True):
+        """ Modifie la configuration du controller.
+            Un nouveau widget d'affichage est alors créé pour remplacer le précédent (temporaire, le mieux serait de le mettre simplement à jour).
+            Les couleurs d'affichage des différents véhicules peuvent ou non être modifié.
+        """
         self.configuration = Configuration.readFile(path)
-        self.mainWindow.displayConfiguration(self.configuration)
+
+        if initColors == True:
+            self.initColors()
+
+        self.mainWindow.setCentralWidget(ConfigDisplayer(self.configuration, self.colors))
+
+    def setResolutionType(self, resolutionType):
+        """ Modifie la valeur de self.resolutionType a resolutionType """
+        self.resolutionType = resolutionType
+
+    def setNbMoveMax(self, nbMoveMax):
+        """ Modifie la valeur de nbMoveMax a nbMoveMax """
+        self.nbMoveMax = nbMoveMax
+
+    def initColors(self):
+        """ Modifie l'attribut self.colors.
+            Affecte aléatoirement une couleur à tous les véhicules. Le véhicule "g" est mis à rouge. L'absence de véhicule est en noir.
+        """
+        self.colors = {}
+
+        for vehicule in self.configuration.getVehicules():
+            self.colors[str(vehicule)] = (random.randint(50, 255), random.randint(50, 255), random.randint(50, 255))
+        self.colors["g"] = (random.randint(200, 255), random.randint(0, 50), random.randint(0,50))
+        self.colors["0"] = (255, 255, 255)
 
     def solve(self, solvingType):
         pass
 
     def createConfigurations(self, path="temp.cfg"):
         pass
+    
 
-    def setResolutionType(self, resolutionType):
-        self.resolutionType = resolutionType
-        print(self.resolutionType)
+class ResolutionType:
+    LINEAR_PROGRAMMING = "Programmation linéaire"
+    TREE_RESOLUTION = "Résolution arborescente"

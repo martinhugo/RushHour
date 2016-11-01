@@ -5,11 +5,16 @@
 
 class Vehicule:
 
-    def __init__(self, marqueur, typeVehicule, orientation):
+    def __init__(self, identifiant, marqueur, typeVehicule, orientation):
         """ Un véhicule est réprésenté par un marqueur sur la grille, un type de véhicule et son orientation """
+        self.idVehicule = identifiant
         self.marqueur = marqueur
         self.typeVehicule = typeVehicule
         self.orientation = orientation
+
+    def getIdVehicule(self):
+        """ Retourne self.idVehicule """
+        return self.idVehicule
 
     def getMarqueur(self):
         """ Retourne le marqueur du véhicule (position en haut à droite sur la grille [0, 36]) """
@@ -27,11 +32,8 @@ class Vehicule:
         """ Modifie l'orientation du véhicule """
         self.orientation = orientation 
 
-    def __str__(self):
-        return str((self.marqueur, self.typeVehicule, self.orientation))
-
     def __repr__(self):
-        return str(self)
+        return self.idVehicule
         
 class TypeVehicule:
     """ Répresente le type du véhicule considéré """

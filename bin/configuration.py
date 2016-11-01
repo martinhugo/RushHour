@@ -11,6 +11,10 @@ class Configuration:
         self.constructConfiguration()
         self.nbCoupMax = nbCoupMax
 
+    def getConfiguration(self):
+        """Retourne self.configuration """
+        return self.configuration
+        
     def setNbCoupMax(self, value):
         """ Modifie la valeur de self.nbCcoupMax """
         self.nbCoupMax = value
@@ -24,8 +28,10 @@ class Configuration:
         return self.vehicules 
 
     def constructConfiguration(self):
-
-        configuration = [(0, 0, 0) for i in range(36)]
+        """ Construit la configuration de base, initialise l'attribut configuration en fonction de l'attribut véhicule.
+            Cette méthode permet de creer un tableau de taille 36 représentant la grille 
+        """
+        configuration = [0 for i in range(36)]
         for vehicule in self.vehicules:
             marqueur = vehicule.getMarqueur()
             orientation = vehicule.getOrientation()
@@ -37,6 +43,10 @@ class Configuration:
 
     @staticmethod
     def readFile(path):
+        """ Lit le fichier passé en paramètre et créé la liste de véhicules présents dans le fichier de configuration
+            Retourne un nouvel objet configuration avec les véhicules trouvés dans le fichier.
+            params: path (str) -> le chemin du fichier de configuration 
+        """
         with open(path, "r") as file:
             content = file.read()
 
@@ -46,27 +56,6 @@ class Configuration:
         content = content[2:]
         vehicules = Configuration.constructVehicules(content)
         return Configuration(vehicules)
-
-    def __str__(self):
-        i = 1
-        content = ""
-        for el in self.configuration:
-            content += str(el) + "\t"
-            if(i%6 == 0): 
-                content += "\n"
-            i += 1
-
-        return content
-
-
-    def __repr__(self):
-        return str(self)
-
-
-
-        
-
-
 
     @staticmethod
     def constructVehicules(content):
@@ -100,17 +89,36 @@ class Configuration:
                         typeVehicule = TypeVehicule.CAMION
 
                 if key not in goodDico.keys():
-                    goodDico[key] = Vehicule(i, typeVehicule, Orientation.DROITE)
+                    goodDico[key] = Vehicule(word, i, typeVehicule, Orientation.DROITE)
 
                 elif (abs(goodDico[key].getMarqueur() - i) == 6):
                         goodDico[key].setOrientation(Orientation.BAS)
 
-
-
         result = list(voitures.values())
         result.extend(list(camions.values()))
-        
         return result
+
+    def __str__(self):
+        """ Retourne la chaine de caractère associé à la configuration.
+            Permet l'affichage de la grille.
+            Cette méthode sert surtout au débug
+        """
+        i = 1
+        content = ""
+        for el in self.configuration:
+            content += str(el) + "\t"
+            if(i%6 == 0): 
+                content += "\n"
+            i += 1
+
+        return content
+
+    def __repr__(self):
+        """ Cf __str__ """
+        return str(self)
+
+
+
 
 
 

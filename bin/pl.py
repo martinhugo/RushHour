@@ -192,11 +192,8 @@ class PL :
 				tab[i].append([0] * z)
 		return tab
 
-def main(): # pour corriger version buggée python (à ne pas oublier de retirer)
-# if __name__ == "__main__":
+if __name__ == "__main__":
     conf = Configuration.readFile("../puzzles/avancé/jam30.txt")
     pl = PL(conf)
     [print(pl.getMatricePresence()[i]) for i in range(len(pl.getMatricePresence()))]
     [print(pl.getMatriceOccupe()[i]) for i in range(len(pl.getMatriceOccupe()))]
-
-main()

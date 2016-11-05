@@ -16,8 +16,11 @@ class Configuration:
         return self.configuration
         
     def setNbCoupMax(self, value):
-        """ Modifie la valeur de self.nbCcoupMax """
+        """ Modifie la valeur de self.nbCoupMax """
         self.nbCoupMax = value
+
+    def getNbCoupMax(self):
+        return self.nbCoupMax
 
     def setVehicules(self, vehicules):
         """ Modifie la valeur de self.nbCoupMax """
@@ -60,7 +63,7 @@ class Configuration:
     @staticmethod
     def constructVehicules(content):
         # Idée:
-        # Creer une liste de 36 mots. Parcourir uniquement cette liste et deux dictionnaires vides voitures camions.
+        # Crée une liste de 36 mots. Parcourir uniquement cette liste et deux dictionnaires vides voitures camions.
         #
         # Si on rencontre un mot de taille > 2, on vérifie son type et on l'ajoute à l'un des deux dictionnaires voitures camions à son indice numérotés
         # Si il est ajouté pour la première fois on ajoute son indice en tant que marqueur

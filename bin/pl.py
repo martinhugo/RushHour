@@ -5,9 +5,6 @@ from configuration import *
 class PL :
 	""" 
 		va définir les variables de contrainte nécessaires pour la résolution par PL. 
-
-		Longueurs : v[i] : longueur du véhicule i
-		PositionsVehicules : m[i][j] : tableau de positions représentant l'ensemble des positions occupées par le véhicule i quand le pointeur est en position j.
 		Positions2Points : p[j][l] : ensemble des positions comprises entre j et l. -> TODO
 		
 	"""
@@ -16,11 +13,10 @@ class PL :
 
 		self.nbMove = config.getNbCoupMax() # nombre de mouvements max autorisés
 
-		self.longueurs = [0]*len(config.getVehicules())
-		self.setLongueurs(config)
-
-		self.positionsVehicules = []
-		self.setPositionsVehicules(config)
+		
+		self.initLongueurs(config)
+		self.initPosition2Points()
+		self.initPositionsVehicules(config)
 
 		self.matricePresence = PL.initTab3D(len(config.getVehicules()), 36, self.nbMove + 1)
 		self.setMatricePresence(config, 0)
@@ -30,8 +26,6 @@ class PL :
 
 		self.matriceMouvement = []
 		[self.matriceMouvement.append(PL.initTab3D(36, 36, self.nbMove)) for i in range(len(config.getVehicules()))]
-
-		
 		
 
 	def setMatricePresence(self, config, step):
@@ -88,8 +82,6 @@ class PL :
 				- une configuration des voitures
 				- une étape "step"
 		"""
-		# non vérifié
-
 
 		if step>0:
 			for i in range(0, len(config.getVehicules())):
@@ -119,66 +111,96 @@ class PL :
 		"""
 		return self.matriceMouvement
 
-	def setLongueurs(self, config):
+	def initLongueurs(self, config):
 		""" Défini la longueur de tous les véhicules de config
 
 		Paramètres : 
 				- une configuration des voitures
 		"""
-
+		self.longueurs = [0]*len(config.getVehicules())
 		for i in range(0, len(config.getVehicules())):
 			self.longueurs[i] = config.getVehicules()[i].getTypeVehicule()
 
 	def getLongueurs(self, config):
 		""" Renvoie la longueur de tous les véhicules de config"""
+
 		return self.longueurs
 
-	def setPositionsVehicules(self, config):
+	def initPositionsVehicules(self, config):
 		""" Pour chaque véhicule et pour chaque case, défini toutes les cases occupées
 
 		Paramètres : 
 				- une configuration des voitures
-
-
-		TODO -> 1ere itération : considère que les véhicules peuvent aller dans toutes les cases de la grille, 
-		à modifier pour ne permettre que des déplacement en fonction de leur ligne ou colonne de départ
-
 		"""
+
+		self.positionsVehicules = []
 		for i in range(0, len(config.getVehicules())):
 
 			vehicle = config.getVehicules()[i] 
 			self.positionsVehicules.append([])
 
-			# pour chaque positions -> à modifier par la suite
+			# pour chaque positions de la grille
 			for j in range(36):
 
 				listToAdd = []
 
 				# si le véhicule est tourné vers la droite
-				if(vehicle.getOrientation() == 1):
-					if (vehicle.getMarqueur() + vehicle.getTypeVehicule()) <36: # vérifie que le véhicule ne peut pas sortir de la grille
-						for length in range(vehicle.getTypeVehicule()):
-							listToAdd.append(vehicle.getMarqueur() + length) # ajoute les positions occupées pour la position j
+				index = vehicle.getTypeVehicule() -1
 
 				# si le véhicule est tourné vers le bas
-				else:
-					if (vehicle.getMarqueur() + (vehicle.getTypeVehicule() * 6)) <36: # vérifie que le véhicule ne peut pas sortir de la grille
-						for length in range(vehicle.getTypeVehicule()):
-							listToAdd.append(vehicle.getMarqueur() + length * 6) # ajoute les positions occupées pour la position j
+				if(vehicle.getOrientation() != 1):
+					index = 6 * (vehicle.getTypeVehicule() -1)
+					
+				# si le véhicule ne sort pas de la grille
+				if (j + index <36):
+					listToAdd = self.positions2Points[j][j + index]
 
 				self.positionsVehicules[i].append(listToAdd)
 
-		def getPositionsVehicules(self):
-			""" Renvoie la liste de toutes les cases occupées pour un véhicule et une case donnée """
-			return self.positionsVehicules
+	def getPositionsVehicules(self):
+		""" Renvoie la liste de toutes les cases occupées pour un véhicule et une case donnée """
 
-		def setPosition2Points(self):
-			# TODO
-			pass
+		return self.positionsVehicules
 
-		def getPositions2Points(self):
-			# TODO
-			pass
+	def initPosition2Points(self):
+		""" 
+			défini un tableau [pour toutes les cases i][pour toutes les cases j] qui est l'ensemble des positions comprises entre i et j.
+			Si les cases ne sont pas alignées verticalement ou horizontalement, le tableau renverra une liste vide pour la case correspondante
+		"""
+
+		self.positions2Points = []
+		for i in range(36):
+			self.positions2Points.append([])
+
+			for j in range(36):
+				listToAdd = []
+				step = 0
+
+				# si les 2 points sont alignés horizontalement
+				if(i//6 == j//6):
+					step = 1
+
+				# si les deux points sont alignés verticalement
+				elif(i%6 == j%6):
+					step = 6
+
+				# pour parcourir dans l'autre sens si j est avant i
+				coef = 1
+				if(i>j):
+					coef = -1
+
+				# si les deux points sont alignés verticalement ou horizontalement
+				if(step !=0):
+					for k in range(i, j + (1 * coef), step * coef):
+						listToAdd.append(k) # on ajoute chaque point compris entre i et j
+
+				self.positions2Points[i].append(listToAdd)
+
+
+	def getPositions2Points(self):
+		""" retourne un tableau [pour toutes les cases j][pour toutes les cases l] qui est l'ensemble des positions comprises entre j et l."""
+
+		return self.positions2Points
 
 
 	@staticmethod
@@ -192,8 +214,13 @@ class PL :
 				tab[i].append([0] * z)
 		return tab
 
-if __name__ == "__main__":
+def main():
+# if __name__ == "__main__":
     conf = Configuration.readFile("../puzzles/avancé/jam30.txt")
     pl = PL(conf)
-    [print(pl.getMatricePresence()[i]) for i in range(len(pl.getMatricePresence()))]
-    [print(pl.getMatriceOccupe()[i]) for i in range(len(pl.getMatriceOccupe()))]
+    # [print(pl.getMatricePresence()[i]) for i in range(len(pl.getMatricePresence()))]
+    # [print(pl.getMatriceOccupe()[i]) for i in range(len(pl.getMatriceOccupe()))]
+    # print(pl.getPositions2Points())
+    # [print(pl.getPositionsVehicules()[i]) for i in range(len(pl.getPositionsVehicules()))]
+
+main()

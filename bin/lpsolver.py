@@ -12,10 +12,8 @@ class LPSolver :
     """
 
     def __init__(self, config):
-
         self.config = config
         self.nbMove = config.getNbCoupMax() # nombre de mouvements max autorisés
-        
         self.model = Model()
         self.marqueurs = range(36)
         self.moves = range(self.nbMove+1)
@@ -25,21 +23,22 @@ class LPSolver :
         self.createObjective()
         self.createConstraints()
 
+
+
+
+
+
+
+
+####################################### Méthodes d'initialisations ####################################### 
+
+
     def initArrays(self):
         """ Initialise l'ensembles des tableaux et matrices nécessaires à l'établissement des variables, contraintes et de la fonction objectif """
         self.initLongueurs() # correspond à v
         self.initPositions2Points() # correspond à p
         self.initPositionsVehicules() # correspond à m   
         self.initPossiblesPositions() # créé x, y, z et les initialise selon la configuration passée en param
-
-    def initPossiblesPositions(self):
-        """ Créé une liste des positions possibles que peut prendre chaque véhicule """
-        self.possiblesPositions = {}
-        for vehicule in self.config.getVehicules():
-            idVehicule = vehicule.getIdVehicule()
-            orientation = vehicule.getOrientation()
-            start = vehicule.getMarqueur()%6 if orientation == Orientation.BAS else vehicule.getMarqueur()//6 * Orientation.BAS
-            self.possiblesPositions[idVehicule] = list(range(start, start + 5*orientation + 1, orientation))
 
 
     def createDecisionsVariables(self):
@@ -74,10 +73,22 @@ class LPSolver :
         """ Créé l'ensemble des contraintes nécéssaire à la résolution de la configuration RushHour """
         self.addPositonVehiculeConstraints() # contraintes de type 3
         self.addFreeSpaceMovementConstraints() # contrainte de type 4
+        self.addNbVehiculeMovedPTourConstraints() # contraintes de type 6
 
 
 
 
+
+#######################################   Définition des tableaux d'attributs ####################################### 
+
+    def initPossiblesPositions(self):
+        """ Créé une liste des positions possibles que peut prendre chaque véhicule """
+        self.possiblesPositions = {}
+        for vehicule in self.config.getVehicules():
+            idVehicule = vehicule.getIdVehicule()
+            orientation = vehicule.getOrientation()
+            start = vehicule.getMarqueur()%6 if orientation == Orientation.BAS else vehicule.getMarqueur()//6 * Orientation.BAS
+            self.possiblesPositions[idVehicule] = list(range(start, start + 5*orientation + 1, orientation))
 
 
     def initLongueurs(self):
@@ -154,6 +165,11 @@ class LPSolver :
         return self.positions2Points
 
 
+
+
+#######################################   Définition des contraintes ####################################### 
+
+
     def addPositonVehiculeConstraints(self):
         """ Ajoute l'ensemble des contraintes forçant le fait que pour chaque véhicule i et à chaque tour k, il y a longueur du véhicule i variables de décisions z[i][j][k] à 1. """
         for idVehicule in self.z.keys():
@@ -171,6 +187,20 @@ class LPSolver :
                         for k in self.moves:
                             for p in self.positions2Points[j][l]:
                                 self.model.addConstr(self.y[currentVehicule][j][l][k], GRB.LESS_EQUAL, 1 - quicksum([self.z[idVehicule][p][k-1] for idVehicule in self.y.keys() if idVehicule != currentVehicule and p in self.possiblesPositions[idVehicule]]))
+
+    def addNbVehiculeMovedPTourConstraints(self):
+        """ Ajoute l'ensemble des contraintes exprimant le fait qu'au plus un véhicule est déplacé par tour """
+        for k in self.moves:
+            nbVehiculeMoved = LinExpr()
+
+            #OMFG TOO MUCH IMBRICATION NOOB REPORT
+            for currentVehicule in self.y.keys():
+                for j in self.possiblesPositions[currentVehicule]:
+                    for l in self.possiblesPositions[currentVehicule]:
+                        if j != l:
+                            nbVehiculeMoved.addTerms(1, self.y[currentVehicule][j][l][k])
+
+            self.model.addConstr(nbVehiculeMoved, GRB.LESS_EQUAL, 1)
 
 def main():
 # if __name__ == "__main__":

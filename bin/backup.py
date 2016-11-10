@@ -187,7 +187,16 @@
 #         """
 #         return self.matriceMouvement
 
-    
+#     @staticmethod
+# def initTab3D(x, y, z):
+#     """ créé et initialise un tableau à 3 dimensions aux tailles données en paramètre """
+#     tab = []
+#     for i in range(x):
+#         tab.append([])
+#         for j in range(y):
+#             tab[i].append([0] * z)
+#     return tab
+
 
 
 # Initialisation des variables de décision associé au véhicule

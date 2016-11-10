@@ -32,15 +32,15 @@ class LPSolver :
         self.createObjective()
 
 
-    def definePossiblePositions(self):
+    def definePossiblesPositions(self):
         """ Créé une liste des positions possibles que peut prendre chaque véhicule """
-            self.possiblePositions = {}
+            self.possiblesPositions = {}
             for vehicule in self.config.getVehicules():
                 idVehicule = vehicule.getIdVehicule()
                 orientation = vehicule.getOrientation()
 
                 start = vehicule.getMarqueur()%6 if orientation == Orientation.BAS else vehicule.getMarqueur()//6 # peut être l'inverse, à verifier.
-                self.possiblePositions[idVehicule] = list(range(start, start + 5*orientation))
+                self.possiblesPositions[idVehicule] = list(range(start, start + 5*orientation))
 
     def createDecisionsVariables(self):
         """ Créé l'ensemble des variables de décisions nécessaires à la résolution du problème. """
@@ -49,13 +49,9 @@ class LPSolver :
         for vehicule in self.config.getVehicules():
             # Création de toutes les variables de décision associé au véhicule 
             idVehicule = vehicule.getIdVehicule()
-            self.x[idVehicule] = [[self.model.addVar(vtype=GRB.BINARY) for k in self.moves] for j in self.possiblePositions[idVehicule]]
-            self.z[idVehicule] = [[self.model.addVar(vtype=GRB.BINARY) for k in self.moves] for j in self.possiblePositions[idVehicule]]
-
-            
-        
-            self.y[idVehicule] = [[[self.model.addVar(vtype=GRB.BINARY) for k in self.moves] for i in self.possiblePositions[idVehicule] if i != j] for j in self.possiblePositions[idVehicule]]
-
+            self.x[idVehicule] = [[self.model.addVar(vtype=GRB.BINARY) for k in self.moves] for j in self.possiblesPositions[idVehicule]]
+            self.z[idVehicule] = [[self.model.addVar(vtype=GRB.BINARY) for k in self.moves] for j in self.possiblesPositions[idVehicule]]
+            self.y[idVehicule] = [[[self.model.addVar(vtype=GRB.BINARY) for k in self.moves] for i in self.possiblesPositions[idVehicule] if i != j] for j in self.possiblePositions[idVehicule]]
             self.model.update()
 
     def createObjective(self, objectiveType="RHM"):
@@ -72,6 +68,16 @@ class LPSolver :
                         objective.addTerms(coeff, movementVariable)
 
         self.model.setObjective(objective, GRB.MINIMIZE)
+
+
+    def createConstraints(self):
+        """ Créé l'ensemble des contraintes nécéssaire à la résolution de la configuration RushHour """
+        self.addPositonVehiculeConstraints() # contraintes de type 3
+        self.addFreeSpaceMovementConstraints() # contrainte de type 4
+
+
+
+
 
 
     def initLongueurs(self):
@@ -156,12 +162,14 @@ class LPSolver :
 
     def addFreeSpaceMovementConstraints(self):
         """ Ajoute l'ensemble des contraintes exprimant le fait que chaque véhicule i qui se déplace de j à l au tour k ne peut le faire que s'il n'existe aucune gène entre j et l """
-        for idVehicule in self.y.keys():
+        
+        # TROUVER UN MOYEN D'OPTIMISER LES BOUCLES IMBRIQUEES
+        for currentVehicule in self.y.keys():
             for j in possiblePositions[idVehicule]:
-                for l in possiblePositions[idVehicule]:
+                for l in (l in possiblePossitions[idvehicule] if l!=j):
                     for k in moves:
                         for p in self.Positions2Points(j,l):
-                            self.model.addConstr(movementVariable, GRB.LESS_EQUAL, 1 - quicksum([z[idVehicule][p][k-1] for idVehicule in self.y if idVehicule != currentVehicule]))
+                            self.model.addConstr(self.y[currentVehicule][j][l][k], GRB.LESS_EQUAL, 1 - quicksum([self.z[idVehicule][p][k-1] for idVehicule in self.y.keys() if idVehicule != currentVehicule]))
 
 def main():
 # if __name__ == "__main__":

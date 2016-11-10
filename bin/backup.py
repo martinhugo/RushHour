@@ -88,3 +88,111 @@
     #             rotation = -90
 
     #         self.newImage(path, [sizeCase, sizeCase * height], [positionX * sizeCase, positionY * sizeCase], rotation)
+
+# def setMatricePresence(self, config, step):
+#         """ 
+#             Modifie une matrice de la forme : [pour chaque voiture "i" ][pour chaque case "j" ][pour chaque étape "step"]
+#             Si une voiture i a son marqueur sur une case j à une étape donnée "step", la case de la matrice correspondante indiquera 1, 0 sinon
+
+#             Paramètres : 
+#                 - une configuration des voitures
+#                 - une étape "step"
+
+#         """
+
+#         for i in range(0, len(config.getVehicules())):
+#             self.matricePresence[i][ config.getVehicules()[i].getMarqueur() ][step] = 1
+
+#     def getMatricePresence(self):
+#         """ 
+#             Renvoie une matrice de la forme : [pour chaque voiture "i" ][pour chaque case "j" ][pour chaque étape "step"]
+#             Si une voiture i a son marqueur sur une case j à une étape donnée "step", la case de la matrice correspondante indiquera 1, 0 sinon
+#         """
+#         return self.matricePresence
+
+
+
+
+
+
+
+
+#     def setMatriceOccupe(self, config, step):
+#         """ Modifie une matrice de la forme : [pour chaque voiture "i" ][pour chaque case "j" ][pour chaque étape "step"]
+#             Si une voiture i occupe une case j à une étape donnée "step", la case de la matrice correspondante indiquera 1, 0 sinon
+
+#             Paramètres : 
+#                 - une configuration des voitures
+#                 - une étape "step"
+#         """
+
+#         for i in range(0, len(config.getVehicules())):
+#             vehicle = config.getVehicules()[i]
+#             for positions in self.positionsVehicules[i][vehicle.getMarqueur()]:
+#                 self.matricePresence[i][ positions ][step] = 1
+
+#     def getMatriceOccupe(self):
+#         """ Renvoie une matrice de la forme : [pour chaque voiture "i" ][pour chaque case "j" ][pour chaque étape "step"]
+#             Si une voiture i occupe une case j à une étape donnée "step", la case de la matrice correspondante indiquera 1, 0 sinon
+#         """
+#         return self.matriceOccupe
+
+
+
+
+
+
+
+
+
+
+
+
+#     def setMatriceMouvement(self, config, step):
+#         """ 
+#             modifie une matrice de la forme [Pour chaque voiture i][pour chaque case j][Pour chaque case l][pour chaque étape]
+#             Va modifier si il y a eu un mouvement de k vers l entre l'étape k-1 et l'étape k
+#             S'il y a eu un mouvement, indique 1, sinon 0
+
+#             Paramètres : 
+#                 - une configuration des voitures
+#                 - une étape "step"
+#         """
+
+#         if step>0:
+#             for i in range(0, len(config.getVehicules())):
+#                 previousPointer = -1
+#                 currentPointer = -1
+
+#                 # ne sont modifiés que s'il y a eu un changement de la position du pointeur au cours du k-eme mouvement
+#                 for j in range(36):
+                    
+#                     # ne sera vérifié que si on avait un marqueur à une étape en j qui n'y est plus
+#                     if(self.matricePresence[i][j][step - 1] < self.matricePresence[i][j][step]):
+#                         previousPointer = j
+
+#                     # ne sera vérifié que si on a un pointeur qui n'était pas présent à une étape en j et qui y est maintenant
+#                     elif(self.matricePresence[i][j][step - 1] > self.matricePresence[i][j][step]):
+#                         currentPointer = j
+
+#                 if( previousPointer != -1 and currentPointer != -1):
+#                     self.matriceMouvement[i][previousPointer][currentPointer][step] = 1
+
+
+#     def getMatriceMouvement(self):
+#         """ 
+#             renvoie une matrice de la forme [Pour chaque voiture i][pour chaque case j][Pour chaque case l][pour chaque étape]
+#             Va modifier si il y a eu un mouvement de k vers l entre l'étape k-1 et l'étape k
+#             S'il y a eu un mouvement, indique 1, sinon 0
+#         """
+#         return self.matriceMouvement
+
+    
+
+
+# Initialisation des variables de décision associé au véhicule
+# Définir des contraintes pour initialiser l'instance ?
+# print(idVehicule, vehicule.getMarqueur())
+# self.x[idVehicule][vehicule.getMarqueur()][0].setAttr("X", 1)
+# for pos in self.positionsVehicules[idVehicule]:
+#     self.z[idVehicule][position][0].setAttr("X", 1)

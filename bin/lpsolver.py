@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from configuration import *
-from gurobi import *
+from gurobipy import *
 
 
 class LPSolver :
@@ -10,7 +10,6 @@ class LPSolver :
         Positions2Points : p[j][l] : ensemble des positions comprises entre j et l. -> TODO
         
     """
-    
 
     def __init__(self, config):
 
@@ -18,7 +17,7 @@ class LPSolver :
         
         self.model = Model()
         self.marqueurs = range(36)
-        self.moves = range(nbMove)
+        self.moves = range(self.nbMove+1)
 
         # correspond à v
         self.initLongueurs(config)
@@ -29,17 +28,8 @@ class LPSolver :
         # créé x, y, z et les initialise selon la configuration passée en param
         self.createDecisionsVariables(config)
         # défini la fonction objectif
-        self.createObjectives()
+        self.createObjective()
 
-
-
-        # self.matricePresence = LPSolver.initTab3D(len(config.getVehicules()), 36, self.nbMove + 1)
-        # self.setMatricePresence(config, 0)
-        # self.matriceOccupe = LPSolver.initTab3D(len(config.getVehicules()), 36, self.nbMove + 1)
-        # self.setMatriceOccupe(config, 0)
-        # self.matriceMouvement = []
-        # [self.matriceMouvement.append(PL.initTab3D(36, 36, self.nbMove)) for i in range(len(config.getVehicules()))]
-        
 
     def createDecisionsVariables(self, config):
         """ Créé l'ensemble des variables de décisions nécessaires à la résolution du problème. """
@@ -54,12 +44,9 @@ class LPSolver :
             orientation = vehicule.getOrientation()
             start = vehicule.getMarqueur()%6 if orientation == Orientation.BAS else vehicule.getMarqueur()//6 # peut être l'inverse, à verifier.
             possiblesMove = range(start, start + 5*orientation)
-            self.y[idVehicule] = [[[self.model.addvar(vtype=GRB.BINARY) for k in self.moves] for i in possiblesMove if i != j] for j in possiblesMove]
+            self.y[idVehicule] = [[[self.model.addVar(vtype=GRB.BINARY) for k in self.moves] for i in possiblesMove if i != j] for j in possiblesMove]
 
-            # Initialisation des variables de décision associé au véhicule
-            self.x[idVehicule][vehicule.getMarqueur][0].X = 1
-            for pos in self.positionsVehicules[idVehicule]:
-                self.z[idVehicule][position][0].X = 1
+            self.model.update()
 
     def createObjective(self, objectiveType="RHM"):
         """ Défini l'objectif du modèle en fonction du type d'objectif passé en paramètre.
@@ -67,123 +54,14 @@ class LPSolver :
         """
         objective = LinExpr()
         # A OPTIMISER, Développer rapidement parceque flemme et envie de jouer (présaison open omg too op ggwp rito)
-        for vehiculeList in self.y: 
+        for vehiculeList in self.y.values():
             for j,marqueurList in enumerate(vehiculeList):
                 for l,deplList in enumerate(marqueurList):
                     for movementVariable in deplList:
                         coeff = 1 if objectiveType == "RHM" else len(self.positionEntre2Points(j,l))
-                        objective.addTerm(coeff*movementVariable)
+                        objective.addTerms(coeff, movementVariable)
 
         self.model.setObjective(objective, GRB.MINIMIZE)
-                
-
-
-
-
-
-    def setMatricePresence(self, config, step):
-        """ 
-            Modifie une matrice de la forme : [pour chaque voiture "i" ][pour chaque case "j" ][pour chaque étape "step"]
-            Si une voiture i a son marqueur sur une case j à une étape donnée "step", la case de la matrice correspondante indiquera 1, 0 sinon
-
-            Paramètres : 
-                - une configuration des voitures
-                - une étape "step"
-
-        """
-
-        for i in range(0, len(config.getVehicules())):
-            self.matricePresence[i][ config.getVehicules()[i].getMarqueur() ][step] = 1
-
-    def getMatricePresence(self):
-        """ 
-            Renvoie une matrice de la forme : [pour chaque voiture "i" ][pour chaque case "j" ][pour chaque étape "step"]
-            Si une voiture i a son marqueur sur une case j à une étape donnée "step", la case de la matrice correspondante indiquera 1, 0 sinon
-        """
-        return self.matricePresence
-
-
-
-
-
-
-
-
-    def setMatriceOccupe(self, config, step):
-        """ Modifie une matrice de la forme : [pour chaque voiture "i" ][pour chaque case "j" ][pour chaque étape "step"]
-            Si une voiture i occupe une case j à une étape donnée "step", la case de la matrice correspondante indiquera 1, 0 sinon
-
-            Paramètres : 
-                - une configuration des voitures
-                - une étape "step"
-        """
-
-        for i in range(0, len(config.getVehicules())):
-            vehicle = config.getVehicules()[i]
-            for positions in self.positionsVehicules[i][vehicle.getMarqueur()]:
-                self.matricePresence[i][ positions ][step] = 1
-
-    def getMatriceOccupe(self):
-        """ Renvoie une matrice de la forme : [pour chaque voiture "i" ][pour chaque case "j" ][pour chaque étape "step"]
-            Si une voiture i occupe une case j à une étape donnée "step", la case de la matrice correspondante indiquera 1, 0 sinon
-        """
-        return self.matriceOccupe
-
-
-
-
-
-
-
-
-
-
-
-
-    def setMatriceMouvement(self, config, step):
-        """ 
-            modifie une matrice de la forme [Pour chaque voiture i][pour chaque case j][Pour chaque case l][pour chaque étape]
-            Va modifier si il y a eu un mouvement de k vers l entre l'étape k-1 et l'étape k
-            S'il y a eu un mouvement, indique 1, sinon 0
-
-            Paramètres : 
-                - une configuration des voitures
-                - une étape "step"
-        """
-
-        if step>0:
-            for i in range(0, len(config.getVehicules())):
-                previousPointer = -1
-                currentPointer = -1
-
-                # ne sont modifiés que s'il y a eu un changement de la position du pointeur au cours du k-eme mouvement
-                for j in range(36):
-                    
-                    # ne sera vérifié que si on avait un marqueur à une étape en j qui n'y est plus
-                    if(self.matricePresence[i][j][step - 1] < self.matricePresence[i][j][step]):
-                        previousPointer = j
-
-                    # ne sera vérifié que si on a un pointeur qui n'était pas présent à une étape en j et qui y est maintenant
-                    elif(self.matricePresence[i][j][step - 1] > self.matricePresence[i][j][step]):
-                        currentPointer = j
-
-                if( previousPointer != -1 and currentPointer != -1):
-                    self.matriceMouvement[i][previousPointer][currentPointer][step] = 1
-
-
-    def getMatriceMouvement(self):
-        """ 
-            renvoie une matrice de la forme [Pour chaque voiture i][pour chaque case j][Pour chaque case l][pour chaque étape]
-            Va modifier si il y a eu un mouvement de k vers l entre l'étape k-1 et l'étape k
-            S'il y a eu un mouvement, indique 1, sinon 0
-        """
-        return self.matriceMouvement
-
-
-
-
-
-
 
 
     def initLongueurs(self, config):
@@ -193,16 +71,12 @@ class LPSolver :
                 - une configuration des voitures
         """
         self.longueurs = {}
-        for vehicule in config.getvehicules():
+        for vehicule in config.getVehicules():
             self.longueurs[vehicule.getIdVehicule()] = vehicule.getTypeVehicule()
 
     def getLongueurs(self, config):
         """ Renvoie la longueur de tous les véhicules de config"""
         return self.longueurs
-
-
-
-
 
 
     def initPositionsVehicules(self, config):
@@ -217,28 +91,19 @@ class LPSolver :
             currentList = []
             # pour chaque positions de la grille
             for j in range(36):
-               positions = []
-                indexMax = vehicule.getOrientation() * vehicle.getTypeVehicule()
+                positions = []
+                indexMax = vehicle.getOrientation() * vehicle.getTypeVehicule()
                 # si le véhicule ne sort pas de la grille
                 if (j + indexMax <36):
-                    positions = self.p[j][j + index]
+                    positions = self.position2Points[j][j + indexMax]
                 currentList.append(positions)
 
-            self.positionsVehicules[vehicule.getIdVehicule()] = positions
+            self.positionsVehicules[vehicle.getIdVehicule()] = positions
 
     def getPositionsVehicules(self):
         """ Renvoie la liste de toutes les cases occupées pour un véhicule et une case donnée """
 
         return self.positionsVehicules
-
-
-
-
-
-
-
-
-
 
     def initPosition2Points(self):
         """ Défini la matrice p[][] qui contient pour tout i,j l'ensemble des positions entre ces deux marqueurs.
@@ -274,15 +139,6 @@ class LPSolver :
         """ retourne un tableau [pour toutes les cases j][pour toutes les cases l] qui est l'ensemble des positions comprises entre j et l."""
         return self.positions2Points
 
-
-
-
-
-
-
-
-
-
     @staticmethod
     def initTab3D(x, y, z):
         """ créé et initialise un tableau à 3 dimensions aux tailles données en paramètre """
@@ -296,7 +152,8 @@ class LPSolver :
 def main():
 # if __name__ == "__main__":
     conf = Configuration.readFile("../puzzles/avancé/jam30.txt")
-    pl = PLSolver(conf)
+    conf.setNbCoupMax(10)
+    lp = LPSolver(conf)
     # [print(pl.getMatricePresence()[i]) for i in range(len(pl.getMatricePresence()))]
     # [print(pl.getMatriceOccupe()[i]) for i in range(len(pl.getMatriceOccupe()))]
     # print(pl.getPositions2Points())

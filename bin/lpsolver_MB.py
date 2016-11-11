@@ -271,8 +271,6 @@ class LPSolver :
         for vehicule in config.getVehicules():
             # Création de toutes les variables de décision associé au véhicule 
             i = vehicule.getIdVehicule()
-
-            
             for j in range(36):
             	for k in range(self.nbMove):
             		# contrainte (1)

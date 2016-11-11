@@ -23,6 +23,9 @@ class LPSolver :
         self.createObjective()
         self.createConstraints()
 
+        print(len(self.model.getConstrs()), len(self.model.getVars()))
+        #self.model.optimize()
+
 
 
 
@@ -71,10 +74,9 @@ class LPSolver :
 
     def createConstraints(self):
         """ Créé l'ensemble des contraintes nécéssaire à la résolution de la configuration RushHour """
-        self.addPositonVehiculeConstraints() # contraintes de type 3
-        self.addFreeSpaceMovementConstraints() # contrainte de type 4
-        self.addNbVehiculeMovedPTourConstraints() # contraintes de type 6
-
+        self.addPositonConstraints() # contraintes de type 1, 2 et 3
+        self.addMovementConstraints() # contraintes de type 4, 5, 6, 7
+        self.model.update()
 
 
 
@@ -124,7 +126,7 @@ class LPSolver :
                     positions = self.positions2Points[j][j + indexMax]
                 currentList.append(positions)
 
-            self.positionsVehicules[vehicle.getIdVehicule()] = positions
+            self.positionsVehicules[vehicle.getIdVehicule()] = currentList
 
     def getPositionsVehicules(self):
         """ Renvoie la liste de toutes les cases occupées pour un véhicule et une case donnée """
@@ -170,39 +172,54 @@ class LPSolver :
 #######################################   Définition des contraintes ####################################### 
 
 
-    def addPositonVehiculeConstraints(self):
-        """ Ajoute l'ensemble des contraintes forçant le fait que pour chaque véhicule i et à chaque tour k, il y a longueur du véhicule i variables de décisions z[i][j][k] à 1. """
-        for idVehicule in self.z.keys():
-            for k in self.moves:
+    def addPositonConstraints(self):
+        """ Trois types de contraintes sont ajoutées dans cette méthode
+                Un seul véhicule dans chaque case a chaque tour.
+                Seule vi cases sont occupées par le véhicule i dans sa rangée.
+                zi,m,k = 1 pour toutes m cases occupées par un véhicule i.
+
+        """
+        for k in self.moves:
+            for idVehicule in self.z.keys():
                 self.model.addConstr(quicksum((self.z[idVehicule][j][k] for j in self.possiblesPositions[idVehicule])), GRB.EQUAL, self.longueurs[idVehicule])
 
-    def addFreeSpaceMovementConstraints(self):
-        """ Ajoute l'ensemble des contraintes exprimant le fait que chaque véhicule i qui se déplace de j à l au tour k ne peut le faire que s'il n'existe aucune gène entre j et l """
-        
-        # TROUVER UN MOYEN D'OPTIMISER LES BOUCLES IMBRIQUEES
-        for currentVehicule in self.y.keys():
-            for j in self.possiblesPositions[currentVehicule]:
-                for l in self.possiblesPositions[currentVehicule]:
-                    if j != l:
-                        for k in self.moves:
-                            for p in self.positions2Points[j][l]:
-                                self.model.addConstr(self.y[currentVehicule][j][l][k], GRB.LESS_EQUAL, 1 - quicksum([self.z[idVehicule][p][k-1] for idVehicule in self.y.keys() if idVehicule != currentVehicule and p in self.possiblesPositions[idVehicule]]))
+                for j in self.possiblesPositions[idVehicule]:
+                    self.model.addConstr(self.longueurs[idVehicule]*self.x[idVehicule][j][k] <= quicksum(self.z[idVehicule][l][k] for l in self.positionsVehicules[idVehicule][j]))
 
-    def addNbVehiculeMovedPTourConstraints(self):
-        """ Ajoute l'ensemble des contraintes exprimant le fait qu'au plus un véhicule est déplacé par tour """
+            for j in self.marqueurs:
+                self.model.addConstr(quicksum((self.z[idVehicule][j][k] for idVehicule in self.z.keys() if j in self.possiblesPositions[idVehicule])), GRB.LESS_EQUAL, 1)
+
+    def addMovementConstraints(self):
+        """ Quatre types de contraintes sont ajoutées dans cette méthode:
+                un véhicule ne peut se déplacer que si l'espace entre les deux cases est vide (4)
+                au plus un véhicule est déplacé par tour (5)
+                le dernier mouvement est celui ou le véhicule "g" est au marqueur 17 (6)
+                lors d'un mouvement, le marqueur du véhicule est bien mis à jour (7)
+        """
         for k in self.moves:
+
             nbVehiculeMoved = LinExpr()
+            nbVehiculeMovedAfterK = LinExpr()
 
-            #OMFG TOO MUCH IMBRICATION NOOB REPORT
-            for currentVehicule in self.y.keys():
-                for j in self.possiblesPositions[currentVehicule]:
-                    for l in self.possiblesPositions[currentVehicule]:
+            for idVehicule in self.y.keys():
+                for j in self.possiblesPositions[idVehicule]:
+                    for l in self.possiblesPositions[idVehicule]:
                         if j != l:
-                            nbVehiculeMoved.addTerms(1, self.y[currentVehicule][j][l][k])
+                            nbVehiculeMoved.addTerms(1, self.y[idVehicule][j][l][k])
+                            if k!=self.nbMove:
+                                for nextK in range(k+1, self.nbMove):
+                                    nbVehiculeMovedAfterK.addTerms(1, self.y[idVehicule][j][l][nextK])
 
-            self.model.addConstr(nbVehiculeMoved, GRB.LESS_EQUAL, 1)
+                                self.model.addConstr(self.y[idVehicule][j][l][k] - self.x[idVehicule][l][k+1], GRB.LESS_EQUAL, 0) # (7)
 
-def main():
+                            for p in self.positions2Points[j][l]:
+                                self.model.addConstr(self.y[idVehicule][j][l][k], GRB.LESS_EQUAL, 1 - quicksum([self.z[otherVehicule][p][k-1] for otherVehicule in self.y.keys() if otherVehicule != idVehicule and p in self.possiblesPositions[otherVehicule]])) # (4)
+            
+            self.model.addConstr(nbVehiculeMovedAfterK + self.nbMove*self.x["g"][17][k], GRB.LESS_EQUAL, self.nbMove) #(6)
+            self.model.addConstr(nbVehiculeMoved, GRB.LESS_EQUAL, 1) #(5)
+
+                            
+def main(): 
 # if __name__ == "__main__":
     conf = Configuration.readFile("../puzzles/avancé/jam30.txt")
     conf.setNbCoupMax(10)

@@ -9,7 +9,8 @@
 from configuration import *
 from displayer import *
 import random
-
+import copy
+from lpsolver import *
 
 class ConfigController:
     """ Permet toutes intéractions avec la configuration.
@@ -23,6 +24,10 @@ class ConfigController:
         self.resolutionType = ResolutionType.LINEAR_PROGRAMMING
         self.nbMoveMax = nbMoveMax
         self.colors = colors
+
+        self.nextConfig = []
+        self.predConfig = []
+
 
     def setConfiguration(self, path, initColors = True):
         """ Modifie la configuration du controller.
@@ -55,11 +60,24 @@ class ConfigController:
         self.colors["g"] = (random.randint(200, 255), random.randint(0, 50), random.randint(0,50))
         self.colors["0"] = (255, 255, 255)
 
-    def solve(self, solvingType):
-        pass
+    def solve(self, path="solution.txt"):
+        if resolutionType == ResolutionType.LINEAR_PROGRAMMING:
+            solver = LPSolver(self.configuration)
+            solver.solve(path)
 
-    def createConfigurations(self, path="temp.cfg"):
-        pass
+
+    def createConfigurations(self, path="solution.txt"):
+        with open(path, "r") as file:
+            content = file.read()
+
+        config = copy.deepcopy(self.configuration)
+        for line in content.strip("\n")
+            (idVehicule, j, l, k) = line.strip(",")
+
+            self.nextConfig.append(config)
+
+            config = deepcopy(config)
+
     
 
 class ResolutionType:

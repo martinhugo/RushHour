@@ -27,9 +27,21 @@ class LPSolver :
         #self.model.optimize()
 
 
+    def solve(self, path):
+        """ Demande la résolution du modèle et écrit l'ensemble des variables valeurs de y[i][j][k][l] dans le fichier de chemin path """
+        self.model.optimize()
 
+        content = ""
+        for idVehicule in self.y.keys():
+                for j in self.possiblesPositions[idVehicule]:
+                    for l in self.possiblesPositions[idVehicule]:
+                        if j != l:
+                            for k in self.moves():
+                                if y[i][j][k][l].X == 1:
+                                    content += "%s,%d,%d,%d\n".format(idVehicule, i, j, k)
 
-
+        with open(path, "w") as file:
+            file.write(content)
 
 
 
@@ -76,6 +88,7 @@ class LPSolver :
         """ Créé l'ensemble des contraintes nécéssaire à la résolution de la configuration RushHour """
         self.addPositonConstraints() # contraintes de type 1, 2 et 3
         self.addMovementConstraints() # contraintes de type 4, 5, 6, 7
+        self.addInitialisationConstraints() #contrainte d'initialisation
         self.model.update()
 
 
@@ -199,25 +212,31 @@ class LPSolver :
         for k in self.moves:
 
             nbVehiculeMoved = LinExpr()
-            nbVehiculeMovedAfterK = LinExpr()
 
             for idVehicule in self.y.keys():
                 for j in self.possiblesPositions[idVehicule]:
                     for l in self.possiblesPositions[idVehicule]:
+
                         if j != l:
                             nbVehiculeMoved.addTerms(1, self.y[idVehicule][j][l][k])
-                            if k!=self.nbMove:
-                                for nextK in range(k+1, self.nbMove):
-                                    nbVehiculeMovedAfterK.addTerms(1, self.y[idVehicule][j][l][nextK])
 
+                            if k!=self.nbMove:
                                 self.model.addConstr(self.y[idVehicule][j][l][k] - self.x[idVehicule][l][k+1], GRB.LESS_EQUAL, 0) # (7)
 
                             for p in self.positions2Points[j][l]:
                                 self.model.addConstr(self.y[idVehicule][j][l][k], GRB.LESS_EQUAL, 1 - quicksum([self.z[otherVehicule][p][k-1] for otherVehicule in self.y.keys() if otherVehicule != idVehicule and p in self.possiblesPositions[otherVehicule]])) # (4)
             
-            self.model.addConstr(nbVehiculeMovedAfterK + self.nbMove*self.x["g"][17][k], GRB.LESS_EQUAL, self.nbMove) #(6)
+            self.model.addConstr(nbVehiculeMoved - (1-self.x["g"][17][k]), GRB.EQUAL, 0) #(6)
             self.model.addConstr(nbVehiculeMoved, GRB.LESS_EQUAL, 1) #(5)
 
+    def addInitialisationConstraints(self):
+        """ Ajoute les contraintes d'initialisation représentant la configuration courante """
+        for vehicule in self.config.getVehicules():
+            idVehicule = vehicule.getIdVehicule()
+
+            self.model.addConstr(self.x[idVehicule][vehicule.getMarqueur()][0], GRB.EQUAL, 1)
+            for pos in self.positionsVehicules[idVehicule][vehicule.getMarqueur()]:
+                self.model.addConstr(self.z[idVehicule][pos][0], GRB.EQUAL, 1)
                             
 def main(): 
 # if __name__ == "__main__":

@@ -11,6 +11,7 @@ class Configuration:
         self.constructConfiguration()
         self.nbCoupMax = nbCoupMax
 
+
     def getConfiguration(self):
         """Retourne self.configuration """
         return self.configuration

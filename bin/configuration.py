@@ -10,6 +10,9 @@ class Configuration:
         self.vehicules = list(vehicules)
         self.constructConfiguration()
         self.nbCoupMax = nbCoupMax
+        self.initPositions2Points()
+        self.initPositionsVehicules()
+
 
 
     def getConfiguration(self):
@@ -30,6 +33,9 @@ class Configuration:
     def getVehicules(self):
         """ Retourne self.vehicules """
         return self.vehicules 
+
+    def getPositionsVehicles(self):
+        return self.positionsVehicules
 
     def constructConfiguration(self):
         """ Construit la configuration de base, initialise l'attribut configuration en fonction de l'attribut véhicule.
@@ -102,6 +108,98 @@ class Configuration:
         result.extend(list(camions.values()))
         return result
 
+    def initPositionsVehicules(self):
+        """ Pour chaque véhicule et pour chaque case retourne toutes les cases occupées
+
+            Paramètres : 
+                    - une configuration des voitures
+        """
+        self.positionsVehicules = {}
+
+        for vehicle in self.getVehicules():
+            currentList = []
+            marqueur = vehicle.getMarqueur()
+            # pour chaque positions de la grille
+            indexMax = marqueur + vehicle.getOrientation() * (vehicle.getTypeVehicule()-1)
+            # si le véhicule ne sort pas de la grille
+            if (indexMax <36):
+                self.positionsVehicules[vehicle.getIdVehicule()] = self.positions2Points[marqueur][indexMax]
+
+    def possibleMoveForAVehicle(self, vehicle):
+        marqueur = vehicle.getMarqueur()
+        orientation = vehicle.getOrientation()
+        length = vehicle.getTypeVehicule()
+
+        debut = 0
+        fin = 0
+        if(orientation == 6):
+            debut = marqueur%6
+            fin = debut + 36 - length*6
+        else:
+            debut = marqueur-marqueur%6
+            fin = debut + 6 - length
+
+        return [i for i in range(debut, fin+1, orientation)]
+
+    def possibleMoveForAllVehicles(self):
+        vehicles = self.getVehicules()
+        possibleMoves = {}
+        for vehicle in vehicles:
+            possibleMoves[vehicle.getIdVehicule()] = self.possibleMoveForAVehicle(vehicle)
+        return possibleMoves
+
+    def possiblePositionForAVehicle(self, vehicle):
+        listOfNotPosition = []
+        listOfPositionCurrentVehicle = self.possibleMoveForAVehicle(vehicle)
+        listOfPositionCurrentVehicle.remove(vehicle.getMarqueur())
+        
+        for otherVehicle in self.getVehicules():
+            if otherVehicle != vehicle:
+                listOfNotPosition = list(set(listOfNotPosition) | set(self.getPositionsVehicles()[otherVehicle.getIdVehicule()]))
+                listOfNotPosition = list(set(listOfPositionCurrentVehicle) & set(listOfNotPosition))
+                listOfNotPosition = list(set(listOfNotPosition))
+                
+        for element in listOfNotPosition:
+            listOfPositionCurrentVehicle.remove(element)
+        return listOfPositionCurrentVehicle
+
+    def possiblePositionForAllVehicle(self):
+        dicoAvecNomARevoir = {}
+        for vehicle in self.getVehicules():
+            dicoAvecNomARevoir[vehicle] = self.possiblePositionForAVehicle(vehicle)
+        return dicoAvecNomARevoir
+
+
+
+    def initPositions2Points(self):
+        """ Défini la matrice p[][] qui contient pour tout i,j l'ensemble des positions entre ces deux marqueurs.
+            Si les cases ne sont pas alignées verticalement ou horizontalement, le tableau renverra une liste vide pour la case correspondante
+        """
+        self.positions2Points = []
+        for i in range(36):
+            currentList = []
+            for j in range(36):
+                positions = []
+                step = 0
+                # si les 2 points sont alignés horizontalement
+                if(i//6 == j//6):
+                    step = 1
+
+                # si les deux points sont alignés verticalement
+                elif(i%6 == j%6):
+                    step = 6
+
+                # pour parcourir dans l'autre sens si j est avant i
+                coef = 1 if i<=j else -1
+
+                # si les deux points sont alignés verticalement ou horizontalement
+                if(step !=0):
+                    for k in range(i, j + (1 * coef), step * coef):
+                        positions.append(k) # on ajoute chaque point compris entre i et j
+
+                currentList.append(positions)
+            self.positions2Points.append(currentList)
+
     def __str__(self):
         """ Retourne la chaine de caractère associé à la configuration.
             Permet l'affichage de la grille.
@@ -126,9 +224,14 @@ class Configuration:
 
 
 
-if __name__ == "__main__":
-    conf = Configuration.readFile("../puzzles/avancé/jam30.txt")
-    print(conf)
+# if __name__ == "__main__":
+conf = Configuration.readFile("../puzzles/avancé/jam30.txt")
+print(conf)
+
+print(conf.getPositionsVehicles())
+print(conf.getVehicules())
+print(conf.possibleMoveForAllVehicles())
+print(conf.possiblePositionForAllVehicle())
     
 
 

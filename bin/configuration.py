@@ -2,6 +2,7 @@
 
 from vehicule import *
 import math
+from listTools import *
 """ Contient l'ensemble des classes et types nécessaire à la representation d'une configuration dans le jeu RushHour. """
 
 class Configuration:
@@ -10,7 +11,6 @@ class Configuration:
         self.vehicules = list(vehicules)
         self.constructConfiguration()
         self.nbCoupMax = nbCoupMax
-
 
     def getConfiguration(self):
         """Retourne self.configuration """
@@ -30,6 +30,10 @@ class Configuration:
     def getVehicules(self):
         """ Retourne self.vehicules """
         return self.vehicules 
+
+    def getPositionsVehicles(self):
+        """ retourne un dictionnaire associant la liste de toutes les cases occupées par un véhicule"""
+        return self.positionsVehicules
 
     def constructConfiguration(self):
         """ Construit la configuration de base, initialise l'attribut configuration en fonction de l'attribut véhicule.
@@ -102,6 +106,168 @@ class Configuration:
         result.extend(list(camions.values()))
         return result
 
+    def initPositionsVehicules(self):
+        """ Pour chaque véhicule et pour chaque case retourne toutes les cases occupées
+
+            Paramètres : 
+                    - une configuration des voitures
+        """
+        self.positionsVehicules = {}
+
+        for vehicle in self.getVehicules():
+            currentList = []
+            marqueur = vehicle.getMarqueur()
+            # pour chaque positions de la grille
+            indexMax = marqueur + vehicle.getOrientation() * (vehicle.getTypeVehicule()-1)
+            # si le véhicule ne sort pas de la grille
+            if (indexMax <36):
+                self.positionsVehicules[vehicle.getIdVehicule()] = self.positions2Points[marqueur][indexMax]
+
+
+##########################################################################################################################################
+#                                                                                                                                        #
+#                                                       POUR POSITIONS POSSIBLES                                                         #
+#                                                                                                                                        #
+##########################################################################################################################################
+
+    def allPossiblePositionsForAVehicle(self, vehicle):
+        """ retourne la liste, pour un véhicule, de toutes les cases que ce véhicule peut occuper, sans tenir compte des autres véhicules"""
+
+        marqueur = vehicle.getMarqueur()
+        orientation = vehicle.getOrientation()
+        length = vehicle.getTypeVehicule()
+
+        debut = 0 # correspond au début de la ligne ou de la colonne dépendant de l'orientation du véhicule
+        fin = 0 # correspond à la dernière position possible pour le marqueur du véhicule
+        if(orientation == 6):
+            debut = marqueur%6
+            fin = debut + 36 - length*6
+        else:
+            debut = marqueur-marqueur%6
+            fin = debut + 6 - length
+
+        return [i for i in range(debut, fin+1, orientation)]
+
+
+    def allPossiblePositionsForAllVehicles(self):
+        """ retourne un dictionnaire associant à un véhicule la liste de toutes les cases que ce véhicule peut occuper, sans tenir compte des autres véhicules"""
+
+        vehicles = self.getVehicules()
+        possibleMoves = {}
+        for vehicle in vehicles:
+            possibleMoves[vehicle.getIdVehicule()] = self.allPossiblePositionsForAVehicle(vehicle)
+        return possibleMoves
+
+
+    def possiblePositionForAVehicle(self, vehicle):
+        """ Retourne la liste de toutes les positions effectivement possibles d'un véhicule """
+
+        listPositionVehicle = self.removeCasesEnCommum(vehicle)
+        listPositionVehicle.remove(vehicle.getMarqueur()) # enlever position occupée par curseur
+        listPositionVehicle = self.removeCasesImpossibles(vehicle, listPositionVehicle)
+        return listPositionVehicle
+
+    def removeCasesEnCommum(self, vehicle, listPositionVehicle = None):
+        """ retire toutes les cases en commun entre un véhicule et tous les autres, retourne la liste des mouvements possibles sans ces cases"""
+
+        orientation = vehicle.getOrientation()
+        length = vehicle.getTypeVehicule()
+
+        if(listPositionVehicle == None):
+            listPositionVehicle = self.allPossiblePositionsForAVehicle(vehicle)
+
+        listPositionOtherVehicles = self.unionCasesOtherVehicles(vehicle) 
+        
+        for value in range(length): # pour chaque case occupée par le vehicule
+            listToRemove = listPositionOtherVehicles
+            listToRemove = ListTools.intersection(ListTools.addToList(listPositionVehicle, value * orientation), listToRemove)
+            for element in listToRemove:
+                listPositionVehicle.remove(element - value * orientation) # on enleve tous les éléments en commun
+        return listPositionVehicle
+
+    def unionCasesOtherVehicles(self, vehicle):
+        """ retourne la liste de toutes les cases occupées par les véhicules autres que le véhicule passé en paramètre """
+
+        listPositionOtherVehicles = []
+        for otherVehicle in self.getVehicules(): # pour tous les autres véhicules
+            if otherVehicle != vehicle:
+                # liste de toutes les cases occupées par tous les autres véhicules
+                listPositionOtherVehicles = ListTools.union( listPositionOtherVehicles, self.getPositionsVehicles()[otherVehicle.getIdVehicule()])
+        return listPositionOtherVehicles
+
+
+    def removeCasesImpossibles(self, vehicle, listPositionVehicle = None):
+        """ retire toutes les cases qui nécessitent de sauter par dessus un véhicule """
+
+        marqueur = vehicle.getMarqueur()
+        orientation = vehicle.getOrientation()
+
+        if(listPositionVehicle == None):
+            listPositionVehicle = self.allPossiblePositionsForAVehicle(vehicle)
+
+        listToRemove = []
+        listPositionOtherVehicles = self.unionCasesOtherVehicles(vehicle) 
+
+        for element in listPositionVehicle:
+            for value in listPositionOtherVehicles:
+                if( (orientation == 1 and element//6 == value //6) or (orientation == 6 and element%6 == value%6) ): # si les cases sont alignées
+                    if( (marqueur > value and element < value) or (marqueur < value and element > value) ): # si la case a nécessité un saut par dessus un véhicule
+                        listToRemove.append(element)
+        listToRemove = ListTools.unique(listToRemove)
+
+        for element in listToRemove:
+            listPositionVehicle.remove(element) # on enleve tous les éléments en commun
+        return listPositionVehicle
+
+    def possiblePositionForAllVehicle(self):
+        """ retourne un dictionnaire associant la liste de tous les déplacements effectivement possibles pour un véhicule"""
+
+        dicoPositions = {}
+        for vehicle in self.getVehicules():
+            dicoPositions[vehicle] = self.possiblePositionForAVehicle(vehicle)
+        return dicoPositions
+
+    def getPossiblePosition(self):
+        """ retourne l'ensemble des positions possibles pour tous les véhicules"""
+        self.initPositions2Points()
+        self.initPositionsVehicules()
+        return self.possiblePositionForAllVehicle()
+
+##########################################################################################################################################
+##########################################################################################################################################
+##########################################################################################################################################
+
+
+
+    def initPositions2Points(self):
+        """ Défini la matrice p[][] qui contient pour tout i,j l'ensemble des positions entre ces deux marqueurs.
+            Si les cases ne sont pas alignées verticalement ou horizontalement, le tableau renverra une liste vide pour la case correspondante
+        """
+        self.positions2Points = []
+        for i in range(36):
+            currentList = []
+            for j in range(36):
+                positions = []
+                step = 0
+                # si les 2 points sont alignés horizontalement
+                if(i//6 == j//6):
+                    step = 1
+
+                # si les deux points sont alignés verticalement
+                elif(i%6 == j%6):
+                    step = 6
+
+                # pour parcourir dans l'autre sens si j est avant i
+                coef = 1 if i<=j else -1
+
+                # si les deux points sont alignés verticalement ou horizontalement
+                if(step !=0):
+                    for k in range(i, j + (1 * coef), step * coef):
+                        positions.append(k) # on ajoute chaque point compris entre i et j
+
+                currentList.append(positions)
+            self.positions2Points.append(currentList)
+
     def __str__(self):
         """ Retourne la chaine de caractère associé à la configuration.
             Permet l'affichage de la grille.
@@ -122,13 +288,10 @@ class Configuration:
         return str(self)
 
 
-
-
-
-
-if __name__ == "__main__":
-    conf = Configuration.readFile("../puzzles/avancé/jam30.txt")
-    print(conf)
+# if __name__ == "__main__":
+conf = Configuration.readFile("../puzzles/avancé/jam30.txt")
+print(conf)
+print(conf.getPossiblePosition())
     
 
 

@@ -102,10 +102,9 @@ class Window (QMainWindow):
     
 
 
-def main():
-#if __name__ == "__main__":
+
+if __name__ == "__main__":
     app = QApplication(sys.argv);
     rushhour = Window();
     sys.exit(app.exec_());
 
-main()

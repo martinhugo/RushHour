@@ -15,6 +15,10 @@ class Configuration:
     def getConfiguration(self):
         """Retourne self.configuration """
         return self.configuration
+
+    def setConfiguration(self, config):
+        """ utilisé dans le cas de Dijkstra pour la création des noeuds"""
+        self.configuration = config
         
     def setNbCoupMax(self, value):
         """ Modifie la valeur de self.nbCoupMax """
@@ -24,7 +28,7 @@ class Configuration:
         return self.nbCoupMax
 
     def setVehicules(self, vehicules):
-        """ Modifie la valeur de self.nbCoupMax """
+        """ Modifie la valeur de self.vehicules """
         self.vehicules = list(vehicules)
 
     def getVehicules(self):
@@ -165,6 +169,8 @@ class Configuration:
         listPositionVehicle = self.removeCasesEnCommum(vehicle)
         listPositionVehicle.remove(vehicle.getMarqueur()) # enlever position occupée par curseur
         listPositionVehicle = self.removeCasesImpossibles(vehicle, listPositionVehicle)
+        if(len(listPositionVehicle) == 0):
+            listPositionVehicle = None
         return listPositionVehicle
 
     def removeCasesEnCommum(self, vehicle, listPositionVehicle = None):
@@ -233,12 +239,6 @@ class Configuration:
         self.initPositionsVehicules()
         return self.possiblePositionForAllVehicle()
 
-##########################################################################################################################################
-##########################################################################################################################################
-##########################################################################################################################################
-
-
-
     def initPositions2Points(self):
         """ Défini la matrice p[][] qui contient pour tout i,j l'ensemble des positions entre ces deux marqueurs.
             Si les cases ne sont pas alignées verticalement ou horizontalement, le tableau renverra une liste vide pour la case correspondante
@@ -268,6 +268,10 @@ class Configuration:
                 currentList.append(positions)
             self.positions2Points.append(currentList)
 
+##########################################################################################################################################
+##########################################################################################################################################
+##########################################################################################################################################
+
     def __str__(self):
         """ Retourne la chaine de caractère associé à la configuration.
             Permet l'affichage de la grille.
@@ -288,10 +292,10 @@ class Configuration:
         return str(self)
 
 
-# if __name__ == "__main__":
-conf = Configuration.readFile("../puzzles/avancé/jam30.txt")
-print(conf)
-print(conf.getPossiblePosition())
+if __name__ == "__main__":
+    conf = Configuration.readFile("../puzzles/avancé/jam30.txt")
+    print(conf)
+    print(conf.getPossiblePosition())
     
 
 

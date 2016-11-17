@@ -20,6 +20,10 @@ class Vehicule:
         """ Retourne le marqueur du véhicule (position en haut à droite sur la grille [0, 36]) """
         return self.marqueur
 
+    def setMarqueur(self, marqueur):
+        """ utilisé pour la création d'un noeud dans le cas de Dijkstra"""
+        self.marqueur = marqueur
+
     def getTypeVehicule(self):
         """ Retourne le type du véhicule (VOITURE: 2, CAMION: 3) """
         return self.typeVehicule

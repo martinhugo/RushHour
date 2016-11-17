@@ -11,10 +11,6 @@ class Configuration:
         self.vehicules = list(vehicules)
         self.constructConfiguration()
         self.nbCoupMax = nbCoupMax
-        self.initPositions2Points()
-        self.initPositionsVehicules()
-
-
 
     def getConfiguration(self):
         """Retourne self.configuration """
@@ -231,6 +227,12 @@ class Configuration:
             dicoPositions[vehicle] = self.possiblePositionForAVehicle(vehicle)
         return dicoPositions
 
+    def getPossiblePosition(self):
+        """ retourne l'ensemble des positions possibles pour tous les véhicules"""
+        self.initPositions2Points()
+        self.initPositionsVehicules()
+        return self.possiblePositionForAllVehicle()
+
 ##########################################################################################################################################
 ##########################################################################################################################################
 ##########################################################################################################################################
@@ -289,9 +291,7 @@ class Configuration:
 # if __name__ == "__main__":
 conf = Configuration.readFile("../puzzles/avancé/jam30.txt")
 print(conf)
-
-
-print(conf.possiblePositionForAllVehicle())
+print(conf.getPossiblePosition())
     
 
 

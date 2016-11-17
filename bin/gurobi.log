@@ -417,3 +417,1100 @@ Gurobi 7.0.0 (win64, Python) logging started 11/14/16 19:25:55
 
 Gurobi 7.0.0 (win64, Python) logging started 11/14/16 19:51:56
 
+
+Gurobi 7.0.0 (win64, Python) logging started 11/17/16 10:07:25
+
+
+Gurobi 7.0.0 (win64, Python) logging started 11/17/16 10:07:42
+
+
+Gurobi 7.0.0 (win64, Python) logging started 11/17/16 10:07:58
+
+Optimize a model with 15223 rows, 4620 columns and 39794 nonzeros
+Variable types: 0 continuous, 4620 integer (4620 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 3e+00]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 3e+00]
+Presolve removed 2601 rows and 49 columns
+Presolve time: 0.02s
+
+Explored 0 nodes (0 simplex iterations) in 0.06 seconds
+Thread count was 1 (of 4 available processors)
+
+Solution count 0
+Pool objective bound 1e+100
+
+Model is infeasible
+Best objective -, best bound -, gap -
+
+Gurobi 7.0.0 (win64, Python) logging started 11/17/16 15:58:49
+
+Optimize a model with 36343 rows, 10920 columns and 94829 nonzeros
+Variable types: 0 continuous, 10920 integer (10920 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 3e+00]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 3e+00]
+Presolve removed 6081 rows and 49 columns
+Presolve time: 0.03s
+
+Explored 0 nodes (0 simplex iterations) in 0.11 seconds
+Thread count was 1 (of 4 available processors)
+
+Solution count 0
+Pool objective bound 1e+100
+
+Model is infeasible
+Best objective -, best bound -, gap -
+
+Gurobi 7.0.0 (win64, Python) logging started 11/17/16 15:59:04
+
+Optimize a model with 57463 rows, 17220 columns and 149864 nonzeros
+Variable types: 0 continuous, 17220 integer (17220 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 3e+00]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 3e+00]
+Presolve removed 9561 rows and 49 columns
+Presolve time: 0.05s
+
+Explored 0 nodes (0 simplex iterations) in 0.17 seconds
+Thread count was 1 (of 4 available processors)
+
+Solution count 0
+Pool objective bound 1e+100
+
+Model is infeasible
+Best objective -, best bound -, gap -
+
+Gurobi 7.0.0 (win64, Python) logging started 11/17/16 15:59:21
+
+Optimize a model with 71543 rows, 21420 columns and 186554 nonzeros
+Variable types: 0 continuous, 21420 integer (21420 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 3e+00]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 3e+00]
+Presolve removed 11881 rows and 49 columns
+Presolve time: 0.05s
+
+Explored 0 nodes (0 simplex iterations) in 0.19 seconds
+Thread count was 1 (of 4 available processors)
+
+Solution count 0
+Pool objective bound 1e+100
+
+Model is infeasible
+Best objective -, best bound -, gap -
+
+Gurobi 7.0.0 (win64, Python) logging started 11/17/16 18:55:21
+
+Optimize a model with 71543 rows, 21420 columns and 186554 nonzeros
+Variable types: 0 continuous, 21420 integer (21420 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 3e+00]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 3e+00]
+Presolve removed 11881 rows and 49 columns
+Presolve time: 0.06s
+
+Explored 0 nodes (0 simplex iterations) in 0.24 seconds
+Thread count was 1 (of 4 available processors)
+
+Solution count 0
+Pool objective bound 1e+100
+
+Model is infeasible
+Best objective -, best bound -, gap -
+
+Gurobi 7.0.0 (win64, Python) logging started 11/17/16 18:55:50
+
+Optimize a model with 71492 rows, 21420 columns and 171203 nonzeros
+Variable types: 0 continuous, 21420 integer (21420 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 3e+00]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 3e+00]
+Presolve removed 47333 rows and 15350 columns
+Presolve time: 0.05s
+
+Explored 0 nodes (0 simplex iterations) in 0.19 seconds
+Thread count was 1 (of 4 available processors)
+
+Solution count 0
+Pool objective bound 1e+100
+
+Model is infeasible
+Best objective -, best bound -, gap -
+
+Gurobi 7.0.0 (win64, Python) logging started 11/17/16 18:56:25
+
+Optimize a model with 5441 rows, 21420 columns and 15335 nonzeros
+Variable types: 0 continuous, 21420 integer (21420 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 3e+00]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 3e+00]
+Presolve removed 3866 rows and 18350 columns
+Presolve time: 0.01s
+
+Explored 0 nodes (0 simplex iterations) in 0.03 seconds
+Thread count was 1 (of 4 available processors)
+
+Solution count 0
+Pool objective bound 1e+100
+
+Model is infeasible
+Best objective -, best bound -, gap -
+
+Gurobi 7.0.0 (win64, Python) logging started 11/17/16 18:56:32
+
+Optimize a model with 35 rows, 21420 columns and 35 nonzeros
+Variable types: 0 continuous, 21420 integer (21420 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 1e+00]
+Found heuristic solution: objective 0
+
+Explored 0 nodes (0 simplex iterations) in 0.01 seconds
+Thread count was 1 (of 4 available processors)
+
+Solution count 1: 0 
+Pool objective bound 0
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 0.000000000000e+00, best bound 0.000000000000e+00, gap -
+
+Gurobi 7.0.0 (win64, Python) logging started 11/17/16 18:56:49
+
+Optimize a model with 5441 rows, 21420 columns and 15335 nonzeros
+Variable types: 0 continuous, 21420 integer (21420 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 3e+00]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 3e+00]
+Presolve removed 3866 rows and 18350 columns
+Presolve time: 0.02s
+
+Explored 0 nodes (0 simplex iterations) in 0.12 seconds
+Thread count was 1 (of 4 available processors)
+
+Solution count 0
+Pool objective bound 1e+100
+
+Model is infeasible
+Best objective -, best bound -, gap -
+
+Gurobi 7.0.0 (win64, Python) logging started 11/17/16 18:56:58
+
+Optimize a model with 66137 rows, 21420 columns and 171254 nonzeros
+Variable types: 0 continuous, 21420 integer (21420 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 1e+00]
+Presolve removed 65308 rows and 6521 columns
+Presolve time: 0.05s
+
+Explored 0 nodes (0 simplex iterations) in 0.17 seconds
+Thread count was 1 (of 4 available processors)
+
+Solution count 0
+Pool objective bound 1e+100
+
+Model is infeasible
+Best objective -, best bound -, gap -
+
+Gurobi 7.0.0 (win64, Python) logging started 11/17/16 19:01:41
+
+
+Gurobi 7.0.0 (win64, Python) logging started 11/17/16 19:02:28
+
+Optimize a model with 71543 rows, 21420 columns and 186554 nonzeros
+Variable types: 0 continuous, 21420 integer (21420 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 3e+00]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 3e+00]
+Presolve removed 11881 rows and 49 columns
+Presolve time: 0.06s
+
+Explored 0 nodes (0 simplex iterations) in 0.25 seconds
+Thread count was 1 (of 4 available processors)
+
+Solution count 0
+Pool objective bound 1e+100
+
+Model is infeasible
+Best objective -, best bound -, gap -
+
+Gurobi 7.0.0 (win64, Python) logging started 11/17/16 19:03:02
+
+Optimize a model with 71543 rows, 21420 columns and 186554 nonzeros
+Variable types: 0 continuous, 21420 integer (21420 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 3e+00]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 3e+00]
+Presolve removed 11881 rows and 49 columns
+Presolve time: 0.05s
+
+Explored 0 nodes (0 simplex iterations) in 0.24 seconds
+Thread count was 1 (of 4 available processors)
+
+Solution count 0
+Pool objective bound 1e+100
+
+Model is infeasible
+Best objective -, best bound -, gap -
+
+Gurobi 7.0.0 (win64, Python) logging started 11/17/16 19:07:19
+
+Optimize a model with 71543 rows, 21420 columns and 186554 nonzeros
+Variable types: 0 continuous, 21420 integer (21420 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 3e+00]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 3e+00]
+Presolve removed 11881 rows and 49 columns
+Presolve time: 0.04s
+
+Explored 0 nodes (0 simplex iterations) in 0.20 seconds
+Thread count was 1 (of 4 available processors)
+
+Solution count 0
+Pool objective bound 1e+100
+
+Model is infeasible
+Best objective -, best bound -, gap -
+
+Gurobi 7.0.0 (win64, Python) logging started 11/17/16 19:08:34
+
+Optimize a model with 71543 rows, 21420 columns and 186554 nonzeros
+Variable types: 0 continuous, 21420 integer (21420 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 3e+00]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 3e+00]
+Presolve removed 11881 rows and 49 columns
+Presolve time: 0.05s
+
+Explored 0 nodes (0 simplex iterations) in 0.19 seconds
+Thread count was 1 (of 4 available processors)
+
+Solution count 0
+Pool objective bound 1e+100
+
+Model is infeasible
+Best objective -, best bound -, gap -
+
+Gurobi 7.0.0 (win64, Python) logging started 11/17/16 19:12:59
+
+Optimize a model with 70880 rows, 21420 columns and 185891 nonzeros
+Variable types: 0 continuous, 21420 integer (21420 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 3e+00]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 3e+00]
+Presolve removed 15118 rows and 699 columns
+Presolve time: 0.05s
+
+Explored 0 nodes (0 simplex iterations) in 0.20 seconds
+Thread count was 1 (of 4 available processors)
+
+Solution count 0
+Pool objective bound 1e+100
+
+Model is infeasible
+Best objective -, best bound -, gap -
+
+Gurobi 7.0.0 (win64, Python) logging started 11/17/16 19:13:17
+
+Optimize a model with 4743 rows, 21420 columns and 14637 nonzeros
+Variable types: 0 continuous, 21420 integer (21420 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 3e+00]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 3e+00]
+Found heuristic solution: objective 0
+
+Explored 0 nodes (0 simplex iterations) in 0.01 seconds
+Thread count was 1 (of 4 available processors)
+
+Solution count 1: 0 
+Pool objective bound 0
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 0.000000000000e+00, best bound 0.000000000000e+00, gap -
+
+Gurobi 7.0.0 (win64, Python) logging started 11/17/16 19:13:20
+
+Optimize a model with 4778 rows, 21420 columns and 14672 nonzeros
+Variable types: 0 continuous, 21420 integer (21420 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 3e+00]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 3e+00]
+Presolve removed 3203 rows and 18350 columns
+Presolve time: 0.01s
+
+Explored 0 nodes (0 simplex iterations) in 0.03 seconds
+Thread count was 1 (of 4 available processors)
+
+Solution count 0
+Pool objective bound 1e+100
+
+Model is infeasible
+Best objective -, best bound -, gap -
+
+Gurobi 7.0.0 (win64, Python) logging started 11/17/16 19:13:32
+
+Optimize a model with 4743 rows, 21420 columns and 14637 nonzeros
+Variable types: 0 continuous, 21420 integer (21420 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 3e+00]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 3e+00]
+Found heuristic solution: objective 0
+
+Explored 0 nodes (0 simplex iterations) in 0.01 seconds
+Thread count was 1 (of 4 available processors)
+
+Solution count 1: 0 
+Pool objective bound 0
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 0.000000000000e+00, best bound 0.000000000000e+00, gap -
+
+Gurobi 7.0.0 (win64, Python) logging started 11/17/16 19:14:33
+
+Optimize a model with 4743 rows, 21420 columns and 14637 nonzeros
+Variable types: 0 continuous, 21420 integer (21420 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 3e+00]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 3e+00]
+Found heuristic solution: objective 0
+
+Explored 0 nodes (0 simplex iterations) in 0.01 seconds
+Thread count was 1 (of 4 available processors)
+
+Solution count 1: 0 
+Pool objective bound 0
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 0.000000000000e+00, best bound 0.000000000000e+00, gap -
+
+Gurobi 7.0.0 (win64, Python) logging started 11/17/16 19:14:41
+
+Optimize a model with 35 rows, 21420 columns and 35 nonzeros
+Variable types: 0 continuous, 21420 integer (21420 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 1e+00]
+Found heuristic solution: objective 0
+
+Explored 0 nodes (0 simplex iterations) in 0.01 seconds
+Thread count was 1 (of 4 available processors)
+
+Solution count 1: 0 
+Pool objective bound 0
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 0.000000000000e+00, best bound 0.000000000000e+00, gap -
+
+Gurobi 7.0.0 (win64, Python) logging started 11/17/16 19:14:49
+
+Optimize a model with 4778 rows, 21420 columns and 14672 nonzeros
+Variable types: 0 continuous, 21420 integer (21420 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 3e+00]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 3e+00]
+Presolve removed 3203 rows and 18350 columns
+Presolve time: 0.01s
+
+Explored 0 nodes (0 simplex iterations) in 0.03 seconds
+Thread count was 1 (of 4 available processors)
+
+Solution count 0
+Pool objective bound 1e+100
+
+Model is infeasible
+Best objective -, best bound -, gap -
+
+Gurobi 7.0.0 (win64, Python) logging started 11/17/16 19:22:14
+
+
+Gurobi 7.0.0 (win64, Python) logging started 11/17/16 19:22:59
+
+Optimize a model with 4778 rows, 21420 columns and 14672 nonzeros
+Variable types: 0 continuous, 21420 integer (21420 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 3e+00]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 3e+00]
+Presolve removed 3203 rows and 18350 columns
+Presolve time: 0.01s
+
+Explored 0 nodes (0 simplex iterations) in 0.03 seconds
+Thread count was 1 (of 4 available processors)
+
+Solution count 0
+Pool objective bound 1e+100
+
+Model is infeasible
+Best objective -, best bound -, gap -
+
+Gurobi 7.0.0 (win64, Python) logging started 11/17/16 19:24:00
+
+Optimize a model with 66102 rows, 21420 columns and 171219 nonzeros
+Variable types: 0 continuous, 21420 integer (21420 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 1e+00]
+Found heuristic solution: objective 50
+Presolve removed 66102 rows and 21420 columns
+Presolve time: 0.12s
+Presolve: All rows and columns removed
+
+Explored 0 nodes (0 simplex iterations) in 0.16 seconds
+Thread count was 1 (of 4 available processors)
+
+Solution count 1: 0 
+Pool objective bound 0
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 0.000000000000e+00, best bound 0.000000000000e+00, gap -
+
+Gurobi 7.0.0 (win64, Python) logging started 11/17/16 19:24:15
+
+Optimize a model with 66137 rows, 21420 columns and 171254 nonzeros
+Variable types: 0 continuous, 21420 integer (21420 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 1e+00]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 1e+00]
+Presolve removed 65433 rows and 6491 columns
+Presolve time: 0.05s
+
+Explored 0 nodes (0 simplex iterations) in 0.18 seconds
+Thread count was 1 (of 4 available processors)
+
+Solution count 0
+Pool objective bound 1e+100
+
+Model is infeasible
+Best objective -, best bound -, gap -
+
+Gurobi 7.0.0 (win64, Python) logging started 11/17/16 19:24:38
+
+Optimize a model with 70845 rows, 21420 columns and 185856 nonzeros
+Variable types: 0 continuous, 21420 integer (21420 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 3e+00]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 3e+00]
+Found heuristic solution: objective 51
+Presolve removed 64362 rows and 14353 columns
+Presolve time: 1.05s
+Presolved: 6483 rows, 7067 columns, 26950 nonzeros
+Variable types: 0 continuous, 7067 integer (7064 binary)
+
+Root relaxation: cutoff, 1598 iterations, 0.04 seconds
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0     cutoff    0        51.00000   50.00005  1.96%     -    1s
+
+Explored 0 nodes (1598 simplex iterations) in 1.16 seconds
+Thread count was 4 (of 4 available processors)
+
+Solution count 1: 51 
+Pool objective bound 51
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 5.100000000000e+01, best bound 5.100000000000e+01, gap 0.0000%
+
+Gurobi 7.0.0 (win64, Python) logging started 11/17/16 19:25:52
+
+Optimize a model with 140595 rows, 42420 columns and 368656 nonzeros
+Variable types: 0 continuous, 42420 integer (42420 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 3e+00]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 3e+00]
+Found heuristic solution: objective 101
+Presolve removed 127323 rows and 27950 columns
+Presolve time: 2.12s
+Presolved: 13272 rows, 14470 columns, 55292 nonzeros
+Variable types: 0 continuous, 14470 integer (14467 binary)
+
+Root relaxation: cutoff, 3217 iterations, 0.07 seconds
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0     cutoff    0       101.00000  100.00010  0.99%     -    2s
+
+Explored 0 nodes (3217 simplex iterations) in 2.32 seconds
+Thread count was 4 (of 4 available processors)
+
+Solution count 1: 101 
+Pool objective bound 101
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 1.010000000000e+02, best bound 1.010000000000e+02, gap 0.0000%
+
+Gurobi 7.0.0 (win64, Python) logging started 11/17/16 19:29:55
+
+Optimize a model with 39961 rows, 14433 columns and 107768 nonzeros
+Variable types: 0 continuous, 14433 integer (14433 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 3e+00]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 3e+00]
+Found heuristic solution: objective 51
+Presolve removed 33871 rows and 7730 columns
+Presolve time: 0.62s
+Presolved: 6090 rows, 6703 columns, 25431 nonzeros
+Variable types: 0 continuous, 6703 integer (6701 binary)
+
+Root relaxation: cutoff, 1867 iterations, 0.04 seconds
+
+    Nodes    |    Current Node    |     Objective Bounds      |     Work
+ Expl Unexpl |  Obj  Depth IntInf | Incumbent    BestBd   Gap | It/Node Time
+
+     0     0     cutoff    0        51.00000   50.00005  1.96%     -    0s
+
+Explored 0 nodes (1867 simplex iterations) in 0.72 seconds
+Thread count was 4 (of 4 available processors)
+
+Solution count 1: 51 
+Pool objective bound 51
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 5.100000000000e+01, best bound 5.100000000000e+01, gap 0.0000%
+
+Gurobi 7.0.0 (win64, Python) logging started 11/17/16 19:36:06
+
+Optimize a model with 39961 rows, 14433 columns and 107768 nonzeros
+Variable types: 0 continuous, 14433 integer (14433 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 3e+00]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 3e+00]
+Found heuristic solution: objective 51
+Presolve removed 39893 rows and 14336 columns
+Presolve time: 0.29s
+Presolved: 68 rows, 97 columns, 302 nonzeros
+Variable types: 0 continuous, 97 integer (97 binary)
+
+Explored 0 nodes (0 simplex iterations) in 0.31 seconds
+Thread count was 4 (of 4 available processors)
+
+Solution count 1: 51 
+Pool objective bound 51
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 5.100000000000e+01, best bound 5.100000000000e+01, gap 0.0000%
+
+Gurobi 7.0.0 (win64, Python) logging started 11/17/16 19:38:06
+
+Optimize a model with 39996 rows, 14433 columns and 107803 nonzeros
+Variable types: 0 continuous, 14433 integer (14433 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 3e+00]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 3e+00]
+Presolve removed 27168 rows and 36 columns
+Presolve time: 0.02s
+
+Explored 0 nodes (0 simplex iterations) in 0.08 seconds
+Thread count was 1 (of 4 available processors)
+
+Solution count 0
+Pool objective bound 1e+100
+
+Model is infeasible
+Best objective -, best bound -, gap -
+
+Gurobi 7.0.0 (win64, Python) logging started 11/17/16 19:40:04
+
+Optimize a model with 0 rows, 14433 columns and 0 nonzeros
+Variable types: 0 continuous, 14433 integer (14433 binary)
+Coefficient statistics:
+  Matrix range     [0e+00, 0e+00]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [0e+00, 0e+00]
+Found heuristic solution: objective 0
+
+Explored 0 nodes (0 simplex iterations) in 0.00 seconds
+Thread count was 1 (of 4 available processors)
+
+Solution count 1: 0 
+Pool objective bound 0
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 0.000000000000e+00, best bound 0.000000000000e+00, gap -
+
+Gurobi 7.0.0 (win64, Python) logging started 11/17/16 19:40:12
+
+Optimize a model with 39996 rows, 14433 columns and 107803 nonzeros
+Variable types: 0 continuous, 14433 integer (14433 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 3e+00]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 3e+00]
+Presolve removed 27168 rows and 36 columns
+Presolve time: 0.01s
+
+Explored 0 nodes (0 simplex iterations) in 0.07 seconds
+Thread count was 1 (of 4 available processors)
+
+Solution count 0
+Pool objective bound 1e+100
+
+Model is infeasible
+Best objective -, best bound -, gap -
+
+Gurobi 7.0.0 (win64, Python) logging started 11/17/16 19:40:44
+
+Optimize a model with 39996 rows, 14433 columns and 107803 nonzeros
+Variable types: 0 continuous, 14433 integer (14433 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 3e+00]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 3e+00]
+Presolve removed 27168 rows and 36 columns
+Presolve time: 0.02s
+
+Explored 0 nodes (0 simplex iterations) in 0.07 seconds
+Thread count was 1 (of 4 available processors)
+
+Solution count 0
+Pool objective bound 1e+100
+
+Model is infeasible
+Best objective -, best bound -, gap -
+
+Gurobi 7.0.0 (win64, Python) logging started 11/17/16 19:40:58
+
+Optimize a model with 39996 rows, 14433 columns and 107803 nonzeros
+Variable types: 0 continuous, 14433 integer (14433 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 3e+00]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 3e+00]
+Presolve removed 27168 rows and 36 columns
+Presolve time: 0.02s
+
+Explored 0 nodes (0 simplex iterations) in 0.07 seconds
+Thread count was 1 (of 4 available processors)
+
+Solution count 0
+Pool objective bound 1e+100
+
+Model is infeasible
+Best objective -, best bound -, gap -
+
+Gurobi 7.0.0 (win64, Python) logging started 11/17/16 19:42:26
+
+Optimize a model with 39961 rows, 14433 columns and 107768 nonzeros
+Variable types: 0 continuous, 14433 integer (14433 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 3e+00]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 3e+00]
+Found heuristic solution: objective 51
+Presolve removed 39893 rows and 14336 columns
+Presolve time: 0.24s
+Presolved: 68 rows, 97 columns, 302 nonzeros
+Variable types: 0 continuous, 97 integer (97 binary)
+
+Explored 0 nodes (0 simplex iterations) in 0.26 seconds
+Thread count was 4 (of 4 available processors)
+
+Solution count 1: 51 
+Pool objective bound 51
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 5.100000000000e+01, best bound 5.100000000000e+01, gap 0.0000%
+
+Gurobi 7.0.0 (win64, Python) logging started 11/17/16 19:48:35
+
+Optimize a model with 39961 rows, 14433 columns and 107768 nonzeros
+Variable types: 0 continuous, 14433 integer (14433 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 3e+00]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 3e+00]
+Found heuristic solution: objective 51
+Presolve removed 39893 rows and 14336 columns
+Presolve time: 0.25s
+Presolved: 68 rows, 97 columns, 302 nonzeros
+Variable types: 0 continuous, 97 integer (97 binary)
+
+Explored 0 nodes (0 simplex iterations) in 0.27 seconds
+Thread count was 4 (of 4 available processors)
+
+Solution count 1: 51 
+Pool objective bound 51
+
+Optimal solution found (tolerance 1.00e-04)
+Best objective 5.100000000000e+01, best bound 5.100000000000e+01, gap 0.0000%
+
+Gurobi 7.0.0 (win64, Python) logging started 11/17/16 19:48:55
+
+Optimize a model with 39996 rows, 14433 columns and 107803 nonzeros
+Variable types: 0 continuous, 14433 integer (14433 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 3e+00]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 3e+00]
+Presolve removed 27168 rows and 36 columns
+Presolve time: 0.02s
+
+Explored 0 nodes (0 simplex iterations) in 0.09 seconds
+Thread count was 1 (of 4 available processors)
+
+Solution count 0
+Pool objective bound 1e+100
+
+Model is infeasible
+Best objective -, best bound -, gap -
+
+Gurobi 7.0.0 (win64, Python) logging started 11/17/16 19:52:29
+
+Optimize a model with 39996 rows, 14433 columns and 107803 nonzeros
+Variable types: 0 continuous, 14433 integer (14433 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 3e+00]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 3e+00]
+Presolve removed 27168 rows and 36 columns
+Presolve time: 0.01s
+
+Explored 0 nodes (0 simplex iterations) in 0.06 seconds
+Thread count was 1 (of 4 available processors)
+
+Solution count 0
+Pool objective bound 1e+100
+
+Model is infeasible
+Best objective -, best bound -, gap -
+
+Gurobi 7.0.0 (win64, Python) logging started 11/17/16 19:56:36
+
+Optimize a model with 39996 rows, 14433 columns and 107803 nonzeros
+Variable types: 0 continuous, 14433 integer (14433 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 3e+00]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 3e+00]
+Presolve removed 5748 rows and 36 columns
+Presolve time: 0.01s
+
+Explored 0 nodes (0 simplex iterations) in 0.07 seconds
+Thread count was 1 (of 4 available processors)
+
+Solution count 0
+Pool objective bound 1e+100
+
+Model is infeasible
+Best objective -, best bound -, gap -
+
+Gurobi 7.0.0 (win64, Python) logging started 11/17/16 19:57:18
+
+Optimize a model with 39996 rows, 14433 columns and 107803 nonzeros
+Variable types: 0 continuous, 14433 integer (14433 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 3e+00]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 3e+00]
+Presolve removed 5748 rows and 36 columns
+Presolve time: 0.02s
+
+Explored 0 nodes (0 simplex iterations) in 0.07 seconds
+Thread count was 1 (of 4 available processors)
+
+Solution count 0
+Pool objective bound 1e+100
+
+Model is infeasible
+Best objective -, best bound -, gap -
+
+Gurobi 7.0.0 (win64, Python) logging started 11/17/16 19:59:04
+
+Optimize a model with 39971 rows, 14433 columns and 107778 nonzeros
+Variable types: 0 continuous, 14433 integer (14433 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 3e+00]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 3e+00]
+Presolve removed 5748 rows and 36 columns
+Presolve time: 0.02s
+
+Explored 0 nodes (0 simplex iterations) in 0.06 seconds
+Thread count was 1 (of 4 available processors)
+
+Solution count 0
+Pool objective bound 1e+100
+
+Model is infeasible
+Best objective -, best bound -, gap -
+
+Gurobi 7.0.0 (win64, Python) logging started 11/17/16 19:59:26
+
+Optimize a model with 39971 rows, 14433 columns and 107778 nonzeros
+Variable types: 0 continuous, 14433 integer (14433 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 3e+00]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 3e+00]
+Presolve removed 5748 rows and 36 columns
+Presolve time: 0.02s
+
+Explored 0 nodes (0 simplex iterations) in 0.06 seconds
+Thread count was 1 (of 4 available processors)
+
+Solution count 0
+Pool objective bound 1e+100
+
+Model is infeasible
+Best objective -, best bound -, gap -
+
+Gurobi 7.0.0 (win64, Python) logging started 11/17/16 19:59:50
+
+Optimize a model with 39971 rows, 14433 columns and 107778 nonzeros
+Variable types: 0 continuous, 14433 integer (14433 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 3e+00]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 3e+00]
+Presolve removed 5748 rows and 36 columns
+Presolve time: 0.02s
+
+Explored 0 nodes (0 simplex iterations) in 0.07 seconds
+Thread count was 1 (of 4 available processors)
+
+Solution count 0
+Pool objective bound 1e+100
+
+Model is infeasible
+Best objective -, best bound -, gap -
+
+Gurobi 7.0.0 (win64, Python) logging started 11/17/16 20:02:15
+
+Optimize a model with 39971 rows, 14433 columns and 107778 nonzeros
+Variable types: 0 continuous, 14433 integer (14433 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 3e+00]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 3e+00]
+Presolve removed 5748 rows and 36 columns
+Presolve time: 0.01s
+
+Explored 0 nodes (0 simplex iterations) in 0.06 seconds
+Thread count was 1 (of 4 available processors)
+
+Solution count 0
+Pool objective bound 1e+100
+
+Model is infeasible
+Best objective -, best bound -, gap -
+
+Gurobi 7.0.0 (win64, Python) logging started 11/17/16 20:02:47
+
+Optimize a model with 39971 rows, 14433 columns and 107778 nonzeros
+Variable types: 0 continuous, 14433 integer (14433 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 3e+00]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 3e+00]
+Presolve removed 5748 rows and 36 columns
+Presolve time: 0.02s
+
+Explored 0 nodes (0 simplex iterations) in 0.06 seconds
+Thread count was 1 (of 4 available processors)
+
+Solution count 0
+Pool objective bound 1e+100
+
+Model is infeasible
+Best objective -, best bound -, gap -
+
+Gurobi 7.0.0 (win64, Python) logging started 11/17/16 20:02:53
+
+Optimize a model with 39971 rows, 14433 columns and 107778 nonzeros
+Variable types: 0 continuous, 14433 integer (14433 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 3e+00]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 3e+00]
+Presolve removed 5748 rows and 36 columns
+Presolve time: 0.02s
+
+Explored 0 nodes (0 simplex iterations) in 0.07 seconds
+Thread count was 1 (of 4 available processors)
+
+Solution count 0
+Pool objective bound 1e+100
+
+Model is infeasible
+Best objective -, best bound -, gap -
+
+Gurobi 7.0.0 (win64, Python) logging started 11/17/16 20:02:56
+
+Optimize a model with 39971 rows, 14433 columns and 107778 nonzeros
+Variable types: 0 continuous, 14433 integer (14433 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 3e+00]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 3e+00]
+Presolve removed 5748 rows and 36 columns
+Presolve time: 0.02s
+
+Explored 0 nodes (0 simplex iterations) in 0.07 seconds
+Thread count was 1 (of 4 available processors)
+
+Solution count 0
+Pool objective bound 1e+100
+
+Model is infeasible
+Best objective -, best bound -, gap -
+
+Gurobi 7.0.0 (win64, Python) logging started 11/17/16 20:03:54
+
+Optimize a model with 39971 rows, 14433 columns and 107778 nonzeros
+Variable types: 0 continuous, 14433 integer (14433 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 3e+00]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 3e+00]
+Presolve removed 5748 rows and 36 columns
+Presolve time: 0.02s
+
+Explored 0 nodes (0 simplex iterations) in 0.06 seconds
+Thread count was 1 (of 4 available processors)
+
+Solution count 0
+Pool objective bound 1e+100
+
+Model is infeasible
+Best objective -, best bound -, gap -
+
+Gurobi 7.0.0 (win64, Python) logging started 11/17/16 20:04:04
+
+Optimize a model with 39971 rows, 14433 columns and 107778 nonzeros
+Variable types: 0 continuous, 14433 integer (14433 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 3e+00]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 3e+00]
+Presolve removed 5748 rows and 36 columns
+Presolve time: 0.02s
+
+Explored 0 nodes (0 simplex iterations) in 0.07 seconds
+Thread count was 1 (of 4 available processors)
+
+Solution count 0
+Pool objective bound 1e+100
+
+Model is infeasible
+Best objective -, best bound -, gap -
+
+Gurobi 7.0.0 (win64, Python) logging started 11/17/16 20:04:21
+
+Optimize a model with 39971 rows, 14433 columns and 107778 nonzeros
+Variable types: 0 continuous, 14433 integer (14433 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 3e+00]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 3e+00]
+Presolve removed 5748 rows and 36 columns
+Presolve time: 0.02s
+
+Explored 0 nodes (0 simplex iterations) in 0.06 seconds
+Thread count was 1 (of 4 available processors)
+
+Solution count 0
+Pool objective bound 1e+100
+
+Model is infeasible
+Best objective -, best bound -, gap -
+
+Gurobi 7.0.0 (win64, Python) logging started 11/17/16 20:04:32
+
+Optimize a model with 39971 rows, 14433 columns and 107778 nonzeros
+Variable types: 0 continuous, 14433 integer (14433 binary)
+Coefficient statistics:
+  Matrix range     [1e+00, 3e+00]
+  Objective range  [1e+00, 1e+00]
+  Bounds range     [1e+00, 1e+00]
+  RHS range        [1e+00, 3e+00]
+Presolve removed 5748 rows and 36 columns
+Presolve time: 0.02s
+
+Explored 0 nodes (0 simplex iterations) in 0.07 seconds
+Thread count was 1 (of 4 available processors)
+
+Solution count 0
+Pool objective bound 1e+100
+
+Model is infeasible
+Best objective -, best bound -, gap -

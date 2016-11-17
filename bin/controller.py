@@ -67,16 +67,17 @@ class ConfigController:
 
 
     def createConfigurations(self, path="solution.txt"):
-        with open(path, "r") as file:
-            content = file.read()
+        # with open(path, "r") as file:
+        #     content = file.read()
 
-        config = copy.deepcopy(self.configuration)
-        for line in content.strip("\n")
-            (idVehicule, j, l, k) = line.strip(",")
+        # config = copy.deepcopy(self.configuration)
+        # for line in content.strip("\n")
+        #     (idVehicule, j, l, k) = line.strip(",")
 
-            self.nextConfig.append(config)
+        #     self.nextConfig.append(config)
 
-            config = deepcopy(config)
+        #     config = deepcopy(config)
+        pass
 
     
 

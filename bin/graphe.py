@@ -150,14 +150,16 @@ class Graphe:
 		for arete in aretes:
 			self.addArete(arete)
 
-	def constructNoeuds(self, noeud, dico):
+	def constructNoeuds(self, noeud):
 		""" construit des noeuds en fonction d'un dictionnaire passé en paramètre"""
+		dico = noeud.getConfig().getPossiblePosition()
+
 		listNoeuds = []
+
 		for objet in dico.keys(): # pour chaque véhicule
-			if(dico[objet] != None):
-				for marqueur in dico[objet]: # pour chaque position possible du véhicule
-					noeudToAdd = Noeud(self.newConfig(noeud.getConfig(), objet, marqueur)) # définition du noeud
-					self.constructNoeud(noeud, noeudToAdd)
+			for marqueur in dico[objet]: # pour chaque position possible du véhicule
+				noeudToAdd = Noeud(self.newConfig(noeud.getConfig(), objet, marqueur)) # définition du noeud
+				self.constructNoeud(noeud, noeudToAdd)
 					
 	def constructNoeud(self, noeudDefinitif, noeudToAdd):
 		""" ajoute le noeud et l'arête correspondant dans le graphe si le noeud et l'arete ne sont pas déjà dans le graphe"""

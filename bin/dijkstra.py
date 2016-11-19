@@ -11,6 +11,7 @@ class Dijkstra:
 	def __init__(self):
 		self.graphe = Graphe()
 		self.A = [] # correspond aux noeud dont un chemin de longueur définitive a été trouvé
+		self.notA = []
 
 	def launchDijkstra(self, config, nbMax):
 
@@ -21,7 +22,7 @@ class Dijkstra:
 		while(not self.verifCondition(configPoidsMin.getConfig())):
 			self.A.append(configPoidsMin)
 
-			self.graphe.constructNoeuds(configPoidsMin, configPoidsMin.getConfig().getPossiblePosition())
+			self.graphe.constructNoeuds(configPoidsMin)
 
 			# initialisation
 			aretesAAnalyser = self.graphe.getAretesFromNoeud(self.A) # toutes les aretes entre A et non A
@@ -83,7 +84,7 @@ class Dijkstra:
 def main():
 
 	dijkstra = Dijkstra()
-	conf = Configuration.readFile("../puzzles/avancé/jam30.txt")
+	conf = Configuration.readFile("../puzzles/expert/jam40.txt")
 	print(conf)
 
 	noeud = Noeud(conf)

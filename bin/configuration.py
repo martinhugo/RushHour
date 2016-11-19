@@ -141,14 +141,12 @@ class Configuration:
         orientation = vehicle.getOrientation()
         length = vehicle.getTypeVehicule()
 
-        debut = 0 # correspond au début de la ligne ou de la colonne dépendant de l'orientation du véhicule
-        fin = 0 # correspond à la dernière position possible pour le marqueur du véhicule
+        debut = 0
         if(orientation == 6):
             debut = marqueur%6
-            fin = debut + 36 - length*6
         else:
             debut = marqueur-marqueur%6
-            fin = debut + 6 - length
+        fin = debut + orientation*(6-length)
 
         return [i for i in range(debut, fin+1, orientation)]
 
@@ -170,7 +168,7 @@ class Configuration:
         listPositionVehicle.remove(vehicle.getMarqueur()) # enlever position occupée par curseur
         listPositionVehicle = self.removeCasesImpossibles(vehicle, listPositionVehicle)
         if(len(listPositionVehicle) == 0):
-            listPositionVehicle = None
+            listPositionVehicle = []
         return listPositionVehicle
 
     def removeCasesEnCommum(self, vehicle, listPositionVehicle = None):
@@ -230,7 +228,9 @@ class Configuration:
 
         dicoPositions = {}
         for vehicle in self.getVehicules():
-            dicoPositions[vehicle] = self.possiblePositionForAVehicle(vehicle)
+            positionsPossibles = self.possiblePositionForAVehicle(vehicle)
+            if positionsPossibles != []:
+                dicoPositions[vehicle] = positionsPossibles
         return dicoPositions
 
     def getPossiblePosition(self):
@@ -292,10 +292,10 @@ class Configuration:
         return str(self)
 
 
-if __name__ == "__main__":
-    conf = Configuration.readFile("../puzzles/avancé/jam30.txt")
-    print(conf)
-    print(conf.getPossiblePosition())
+#if __name__ == "__main__":
+conf = Configuration.readFile("../puzzles/avancé/jam30.txt")
+print(conf)
+print(conf.getPossiblePosition())
     
 
 

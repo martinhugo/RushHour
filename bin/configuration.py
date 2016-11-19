@@ -3,6 +3,7 @@
 from vehicule import *
 import math
 from listTools import *
+import time
 """ Contient l'ensemble des classes et types nécessaire à la representation d'une configuration dans le jeu RushHour. """
 
 class Configuration:
@@ -167,8 +168,7 @@ class Configuration:
         listPositionVehicle = self.removeCasesEnCommum(vehicle)
         listPositionVehicle.remove(vehicle.getMarqueur()) # enlever position occupée par curseur
         listPositionVehicle = self.removeCasesImpossibles(vehicle, listPositionVehicle)
-        if(len(listPositionVehicle) == 0):
-            listPositionVehicle = []
+
         return listPositionVehicle
 
     def removeCasesEnCommum(self, vehicle, listPositionVehicle = None):
@@ -183,10 +183,7 @@ class Configuration:
         listPositionOtherVehicles = self.unionCasesOtherVehicles(vehicle) 
         
         for value in range(length): # pour chaque case occupée par le vehicule
-            listToRemove = listPositionOtherVehicles
-            listToRemove = ListTools.intersection(ListTools.addToList(listPositionVehicle, value * orientation), listToRemove)
-            for element in listToRemove:
-                listPositionVehicle.remove(element - value * orientation) # on enleve tous les éléments en commun
+            listPositionVehicle = ListTools.difference(listPositionVehicle, ListTools.addToList(listPositionOtherVehicles, - value * orientation))
         return listPositionVehicle
 
     def unionCasesOtherVehicles(self, vehicle):
@@ -215,12 +212,11 @@ class Configuration:
         for element in listPositionVehicle:
             for value in listPositionOtherVehicles:
                 if( (orientation == 1 and element//6 == value //6) or (orientation == 6 and element%6 == value%6) ): # si les cases sont alignées
-                    if( (marqueur > value and element < value) or (marqueur < value and element > value) ): # si la case a nécessité un saut par dessus un véhicule
+                    if( (marqueur > value > element) or (marqueur < value < element) ): # si la case a nécessité un saut par dessus un véhicule
                         listToRemove.append(element)
-        listToRemove = ListTools.unique(listToRemove)
 
-        for element in listToRemove:
-            listPositionVehicle.remove(element) # on enleve tous les éléments en commun
+        listPositionVehicle = ListTools.difference(listPositionVehicle, listToRemove)
+
         return listPositionVehicle
 
     def possiblePositionForAllVehicle(self):
@@ -295,7 +291,10 @@ class Configuration:
 #if __name__ == "__main__":
 conf = Configuration.readFile("../puzzles/avancé/jam30.txt")
 print(conf)
+start_time = time.time()
 print(conf.getPossiblePosition())
+stop_time = time.time()
+print(stop_time - start_time)
     
 
 

@@ -17,3 +17,7 @@ class ListTools:
     @staticmethod
     def addToList(a, cte):
         return [value+cte for value in a]
+
+    @staticmethod
+    def difference(a, b):
+        return list(set(a) - set(b))

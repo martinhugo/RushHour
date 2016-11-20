@@ -137,12 +137,6 @@ class Graphe:
 				return item
 		return []
 
-	def getAretesFromNoeud(self, noeuds):
-		aretesAAnalyser = []
-		for noeud in noeuds:
-			aretesAAnalyser + noeud.getAretes()
-		return aretesAAnalyser
-
 	######################################## AUTRES METHODES ###################################
 
 	def addNoeud(self, noeud):
@@ -185,9 +179,6 @@ class Graphe:
 			noeudToAdd.setLongueurChemin(math.inf)
 			self.addNoeud(noeudToAdd)
 			B.append(noeudToAdd)
-
-		
-
 
 	def verifNoeudInGraphe(self, noeud):
 		""" retourne vrai si le noeud est dans le graphe"""

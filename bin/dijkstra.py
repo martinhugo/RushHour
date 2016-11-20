@@ -17,23 +17,19 @@ class Dijkstra:
 
 	def launchDijkstra(self, config, nbMax):
 
-		
+		start_time = time.time()
 		configPoidsMin = Noeud(config)
 		configPoidsMin.setLongueurChemin(0)
+		configPoidsMin.setHistorique([config])
 		self.graphe.addNoeud(configPoidsMin)
 		self.B.append(configPoidsMin)
-		# i = 0
-		# while(i<2):
 
-		# 	i+=1
 		while(not self.verifCondition(configPoidsMin.getConfig())):
-			start_time = time.time()
+			
 			self.A.append(configPoidsMin)
 			self.B.remove(configPoidsMin)
-			# time3 = time.time()
+	
 			self.graphe.constructNoeuds(configPoidsMin, self.B) # occupe 1/6 du temps total
-			# time4 = time.time()
-			# print("construction du graphe---->", time4 - time3)
 
 			# initialisation
 			aretesAAnalyser = self.graphe.getAretesFromNoeud(self.B) # toutes les aretes entre A et non A
@@ -58,14 +54,13 @@ class Dijkstra:
 
 			# on récupère le chemin le plus court et on itère
 			configPoidsMin = noeudCheminMin
-			stop_time = time.time()
-			print("temps boucle --->", stop_time - start_time)
 
 			print("poids chemin considéré : ", noeudCheminMin.getLongueurChemin())
 
 		print("\nlongueur minimale trouvée : ", configPoidsMin.getLongueurChemin(), "\n")
-		print(configPoidsMin.getConfig())
-		
+		[print(configPoidsMin.getHistorique()[i]) for i in range(len(configPoidsMin.getHistorique()))]
+		stop_time = time.time()
+		print("temps total ---->", stop_time - start_time, " sec")
 		
 
 	@staticmethod
@@ -85,7 +80,7 @@ class Dijkstra:
 		""" retourne le noeud mis à jour si le chemin est plus court"""
 		if((noeudDefinitif.getLongueurChemin() + arete.getPoids()) < noeud.getLongueurChemin()):
 			noeud.setLongueurChemin(noeudDefinitif.getLongueurChemin() + arete.getPoids())
-			# noeud.setHistorique(noeudDefinitif.getConfig())
+			noeud.setHistorique(noeudDefinitif.getHistorique() + [noeud.getConfig()])
 		return noeud
 
 	def majPoidsMin(self, poidsMin, arete, noeud, noeudDefinitif):
@@ -100,7 +95,7 @@ class Dijkstra:
 def main():
 
 	dijkstra = Dijkstra()
-	conf = Configuration.readFile("../puzzles/avancé/jam30.txt")
+	conf = Configuration.readFile("../puzzles/débutant/jam1.txt")
 	print(conf)
 
 	noeud = Noeud(conf)

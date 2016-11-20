@@ -244,13 +244,13 @@ class Configuration:
         return str(self)
 
 
-#if __name__ == "__main__":
-conf = Configuration.readFile("../puzzles/avancé/jam30.txt")
-print(conf)
-start_time = time.time()
-print(conf.getPossiblePosition())
-stop_time = time.time()
-print((stop_time * 1000 - start_time*1000))
+if __name__ == "__main__":
+    conf = Configuration.readFile("../puzzles/avancé/jam30.txt")
+    print(conf)
+    start_time = time.time()
+    print(conf.getPossiblePosition())
+    stop_time = time.time()
+    print((stop_time - start_time))
     
 
 

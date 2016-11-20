@@ -37,6 +37,12 @@ class Arete:
 		""" modifie le poids de l'arête par celui donné en paramètre """
 		self.poids = poids
 
+	def getExtremite(self, noeud):
+		""" retourne le noeud à l'autre extrémité de l'arete"""
+		if(self.coupleNoeud[0] == noeud):
+			return self.coupleNoeud[1]
+		return self.coupleNoeud[0]
+
 
 
 
@@ -56,6 +62,7 @@ class Noeud:
 		self.longueurChemin = math.inf
 		self.historique = []
 		self.aretesReliees = []
+		self.aretes = []
 
 	def getConfig(self):
 		""" Retourne la configuration correpondant au noeud """
@@ -82,6 +89,12 @@ class Noeud:
 
 	def getNoeudsRelies(self):
 		return self.noeudsRelies
+
+	def addArete(self, arete):
+		self.aretes.append(arete)
+
+	def getAretes(self):
+		return self.aretes
 
 
 
@@ -124,11 +137,10 @@ class Graphe:
 				return item
 		return []
 
-	def getAretesFromNoeud(self, noeudsDefinitifs):
+	def getAretesFromNoeud(self, noeuds):
 		aretesAAnalyser = []
-		for item in self.aretes:
-			if ((self.isInList(item.getCoupleNoeud()[0], noeudsDefinitifs) and not (self.isInList(item.getCoupleNoeud()[1], noeudsDefinitifs))) or (self.isInList(item.getCoupleNoeud()[1], noeudsDefinitifs) and not (self.isInList(item.getCoupleNoeud()[0], noeudsDefinitifs)))):
-				aretesAAnalyser.append(item)
+		for noeud in noeuds:
+			aretesAAnalyser + noeud.getAretes()
 		return aretesAAnalyser
 
 	######################################## AUTRES METHODES ###################################
@@ -150,7 +162,7 @@ class Graphe:
 		for arete in aretes:
 			self.addArete(arete)
 
-	def constructNoeuds(self, noeud):
+	def constructNoeuds(self, noeud, B):
 		""" construit des noeuds en fonction d'un dictionnaire passé en paramètre"""
 		dico = noeud.getConfig().getPossiblePosition()
 
@@ -159,18 +171,23 @@ class Graphe:
 		for objet in dico.keys(): # pour chaque véhicule
 			for marqueur in dico[objet]: # pour chaque position possible du véhicule
 				noeudToAdd = Noeud(self.newConfig(noeud.getConfig(), objet, marqueur)) # définition du noeud
-				self.constructNoeud(noeud, noeudToAdd)
+				self.constructNoeud(noeud, noeudToAdd, B)
 					
-	def constructNoeud(self, noeudDefinitif, noeudToAdd):
+	def constructNoeud(self, noeudDefinitif, noeudToAdd, B):
 		""" ajoute le noeud et l'arête correspondant dans le graphe si le noeud et l'arete ne sont pas déjà dans le graphe"""
-
-		if(not self.verifNoeudInGraphe(noeudToAdd)): # si noeud inexistant
-			noeudToAdd.setLongueurChemin(math.inf)
-			self.addNoeud(noeudToAdd)
 
 		areteToAdd = Arete([noeudDefinitif, noeudToAdd], 1)
 		if(not self.verifAreteInGraphe(areteToAdd)): # si arete inexistante
 			self.addArete(areteToAdd)
+			noeudToAdd.addArete(areteToAdd) # le noeud a une réference sur les aretes
+
+		if(not self.verifNoeudInGraphe(noeudToAdd)): # si noeud inexistant
+			noeudToAdd.setLongueurChemin(math.inf)
+			self.addNoeud(noeudToAdd)
+			B.append(noeudToAdd)
+
+		
+
 
 	def verifNoeudInGraphe(self, noeud):
 		""" retourne vrai si le noeud est dans le graphe"""

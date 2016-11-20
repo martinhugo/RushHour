@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import math
+import time
 
 from configuration import *
 from graphe import *
@@ -11,46 +12,61 @@ class Dijkstra:
 	def __init__(self):
 		self.graphe = Graphe()
 		self.A = [] # correspond aux noeud dont un chemin de longueur définitive a été trouvé
+		self.B = []
 		self.notA = []
 
 	def launchDijkstra(self, config, nbMax):
 
+		
 		configPoidsMin = Noeud(config)
 		configPoidsMin.setLongueurChemin(0)
 		self.graphe.addNoeud(configPoidsMin)
+		self.B.append(configPoidsMin)
+		# i = 0
+		# while(i<2):
 
+		# 	i+=1
 		while(not self.verifCondition(configPoidsMin.getConfig())):
+			start_time = time.time()
 			self.A.append(configPoidsMin)
-
-			self.graphe.constructNoeuds(configPoidsMin)
+			self.B.remove(configPoidsMin)
+			# time3 = time.time()
+			self.graphe.constructNoeuds(configPoidsMin, self.B) # occupe 1/6 du temps total
+			# time4 = time.time()
+			# print("construction du graphe---->", time4 - time3)
 
 			# initialisation
-			aretesAAnalyser = self.graphe.getAretesFromNoeud(self.A) # toutes les aretes entre A et non A
+			aretesAAnalyser = self.graphe.getAretesFromNoeud(self.B) # toutes les aretes entre A et non A
 			poidsMin = math.inf
 			noeudCheminMin = None
 
-			for arete in aretesAAnalyser:
-				# on prend les extrémités de l'arete
-				noeudA, noeudNotA = self.graphe.coupleNoeud(arete, self.A)
+			# for arete in aretesAAnalyser:
+			for noeudNotA in self.B:
+				for arete in noeudNotA.getAretes():
+					# on prend les extrémités de l'arete
+					noeudA = arete.getExtremite(noeudNotA) # on récupère le noeud dans A
+					
+					# on met à jour la taille du chemin de noeud en dehors de A
+					noeudNotA = self.majLongueurChemin(arete, noeudNotA, noeudA)
 
-				# on met à jour la taille du chemin de noeud en dehors de A
-				noeudNotA = self.majLongueurChemin(arete, noeudNotA, noeudA)
+					# on met à jour poids min
+					poidsMin, verif = self.majPoidsMin(poidsMin, arete, noeudNotA, noeudA)
 
-				# on met à jour poids min
-				poidsMin, verif = self.majPoidsMin(poidsMin, arete, noeudNotA, noeudA)
-
-				# si poids min mis à jour, on a rencontré un chemin plus court, que l'on stocke
-				if(verif):
-					noeudCheminMin = noeudNotA
+					# si poids min mis à jour, on a rencontré un chemin plus court, que l'on stocke
+					if(verif):
+						noeudCheminMin = noeudNotA
 
 			# on récupère le chemin le plus court et on itère
 			configPoidsMin = noeudCheminMin
-			print("longueur --->", noeudCheminMin.getLongueurChemin())
+			stop_time = time.time()
+			print("temps boucle --->", stop_time - start_time)
 
 			print("poids chemin considéré : ", noeudCheminMin.getLongueurChemin())
 
 		print("\nlongueur minimale trouvée : ", configPoidsMin.getLongueurChemin(), "\n")
 		print(configPoidsMin.getConfig())
+		
+		
 
 	@staticmethod
 	def verifCondition(config):
@@ -84,7 +100,7 @@ class Dijkstra:
 def main():
 
 	dijkstra = Dijkstra()
-	conf = Configuration.readFile("../puzzles/expert/jam40.txt")
+	conf = Configuration.readFile("../puzzles/avancé/jam30.txt")
 	print(conf)
 
 	noeud = Noeud(conf)

@@ -24,12 +24,14 @@ class Dijkstra:
 
 		self.graphe.addNoeud(configPoidsMin) # ajout du noeud dans le graphe
 		self.B.append(configPoidsMin) # ajout du premier noeud dans B (tant que pas dans la boucle, pas définitif)
-
 		while(not self.verifCondition(configPoidsMin.getConfig())):
-			
+			time3 = time.time()
 			self.A.append(configPoidsMin) # on ajoute le noeud définitif à A
 			self.B.remove(configPoidsMin) # on retire le noeud définitif de B
+			time1 = time.time()
 			self.graphe.constructNoeuds(configPoidsMin, self.B)
+			time2 = time.time()
+			print("temps de construction du graphe ---->", time2 - time1)
 
 			# initialisation
 			poidsMin = math.inf
@@ -43,6 +45,8 @@ class Dijkstra:
 
 			configPoidsMin = noeudCheminMin # on récupère le chemin le plus court et on itère
 			print(configPoidsMin.getLongueurChemin())
+			time4 = time.time()
+			print("temps while --->", time4 - time3)
 
 		print("\nlongueur minimale trouvée : ", configPoidsMin.getLongueurChemin(), "\n")
 		[print(configPoidsMin.getHistorique()[i]) for i in range(len(configPoidsMin.getHistorique()))]

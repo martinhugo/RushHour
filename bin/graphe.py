@@ -114,7 +114,6 @@ class Graphe:
 		self.noeuds = []
 		self.aretes = []
 
-
 	############################### GETTERS ET SETTERS #########################################
 
 	def getNoeuds(self):
@@ -143,9 +142,8 @@ class Graphe:
 		self.noeuds.append(noeud)
 
 	def addNoeuds(self, noeuds):
-		for noeud in noeuds:
-			self.addNoeud(noeud)
-
+		[self.addNoeud(noeud) for noeud in noeuds]
+			
 	def removeNoeud(self, noeud):
 		self.noeuds.remove(noeud)
 
@@ -153,36 +151,30 @@ class Graphe:
 		self.aretes.append(arete)
 
 	def addAretes(self, aretes):
-		for arete in aretes:
-			self.addArete(arete)
-
+		[self.addArete(arete) for arete in aretes]
+			
 	def constructNoeuds(self, noeud, B):
 		""" construit des noeuds en fonction d'un dictionnaire passé en paramètre"""
 		dico = noeud.getConfig().getPossiblePosition()
-
-		listNoeuds = []
-
-		for objet in dico.keys(): # pour chaque véhicule
-			for marqueur in dico[objet]: # pour chaque position possible du véhicule
-				noeudToAdd = Noeud(self.newConfig(noeud.getConfig(), objet, marqueur)) # définition du noeud
-				self.constructNoeud(noeud, noeudToAdd, B)
-					
+		# pour chaque véhicule, pour chaque position possible du véhicule
+		[[self.constructNoeud(noeud, Noeud(self.newConfig(noeud.getConfig(), objet, marqueur)) , B) for marqueur in dico[objet]] for objet in dico.keys()]
+						
 	def constructNoeud(self, noeudDefinitif, noeudToAdd, B):
 		""" ajoute le noeud et l'arête correspondant dans le graphe si le noeud et l'arete ne sont pas déjà dans le graphe"""
 
 		areteToAdd = Arete([noeudDefinitif, noeudToAdd], 1)
 		if(not self.verifAreteInGraphe(areteToAdd)): # si arete inexistante
-			self.addArete(areteToAdd)
-			noeudToAdd.addArete(areteToAdd) # le noeud a une réference sur les aretes
+			self.addArete(areteToAdd) # ajout de l'arête au graphe
+			noeudToAdd.addArete(areteToAdd) # le noeud a une réference sur l'aretes
 
-		if(not self.verifNoeudInGraphe(noeudToAdd)): # si noeud inexistant
-			noeudToAdd.setLongueurChemin(math.inf)
-			self.addNoeud(noeudToAdd)
-			B.append(noeudToAdd)
+			# si arete existante, le noeud est existant aussi
+			if(not self.verifNoeudInGraphe(noeudToAdd)): # si noeud inexistant
+				noeudToAdd.setLongueurChemin(math.inf)
+				self.addNoeud(noeudToAdd)
+				B.append(noeudToAdd)
 
 	def verifNoeudInGraphe(self, noeud):
 		""" retourne vrai si le noeud est dans le graphe"""
-
 		for n in self.getNoeuds():
 			if(self.compare2Config(n.getConfig(), noeud.getConfig())):
 				return True
@@ -190,23 +182,16 @@ class Graphe:
 
 	def verifAreteInGraphe(self, arete):
 		""" retourne vrai si l'arete est dans le graphe"""
-		noeud1, noeud2 = arete.getCoupleNoeud()
-		for a in self.getAretes():
-			if(self.compare2Aretes(a, arete)):
-				return True
-		return False
+		return True in [self.compare2Aretes(a, arete) for a in self.getAretes() ]
+
 
 	####################################### METHODES STATIQUES #########################################
 
 	@staticmethod
 	def compare2Config(config1, config2):
 		""" cette méthode retourne vrai si les 2 configurations données en paramètre sont identiques"""
-		list1 = []
-		list2 = []
-		for vehicule in range(len(config1.getVehicules())):
-			list1.append(config1.getVehicules()[vehicule].getMarqueur())
-		for vehicule in range(len(config2.getVehicules())):
-			list2.append(config2.getVehicules()[vehicule].getMarqueur())
+		list1 = [config1.getVehicules()[vehicule].getMarqueur() for vehicule in range(len(config1.getVehicules()))]
+		list2 = [config2.getVehicules()[vehicule].getMarqueur() for vehicule in range(len(config2.getVehicules()))]
 		return (len(ListTools.intersection(list1, list2)) == len(config1.getVehicules()))
 
 	@staticmethod
@@ -224,23 +209,6 @@ class Graphe:
 		if(Graphe.compare2Noeuds(noeud12, noeud21) and Graphe.compare2Noeuds(noeud11, noeud22)):
 			return True
 		return False
-
-	@staticmethod
-	def isInList(noeud, listNoeud):
-		""" retourne vrai si le noeud est dans la liste de noeud donnée en paramètre"""
-		return True in [Graphe.compare2Noeuds(noeud, i) for i in listNoeud]
-
-	@staticmethod
-	def coupleNoeud(arete, noeudDefinitifs):
-		""" cette fonction retourne les noeuds dans l'ordre suivant : noeud définitif, noeud non définitif pour l'arête donnée"""
-		if(Graphe.isInList(arete.getCoupleNoeud()[0], noeudDefinitifs)):
-			return arete.getCoupleNoeud()[0], arete.getCoupleNoeud()[1]
-		return arete.getCoupleNoeud()[1], arete.getCoupleNoeud()[0]
-
-	@staticmethod
-	def getConfigCoupleNoeud(arete):
-		""" retourne les configs des noeuds reliés par l'arete"""
-		return arete.getCoupleNoeud()[0].getConfig(), arete.getCoupleNoeud()[1].getConfig()
 
 	@staticmethod
 	def newConfig(configInit, vehicle, newPosition):

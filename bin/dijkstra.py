@@ -19,37 +19,29 @@ class Dijkstra:
 		start_time = time.time()
 
 		configPoidsMin = Noeud(config)
-		configPoidsMin.setLongueurChemin(0)
-		configPoidsMin.setHistorique([config])
+		configPoidsMin.setHistorique([(config, 0)])
 
 		self.graphe.addNoeud(configPoidsMin) # ajout du noeud dans le graphe
 		self.B.append(configPoidsMin) # ajout du premier noeud dans B (tant que pas dans la boucle, pas définitif)
+
 		while(not self.verifCondition(configPoidsMin.getConfig())):
-			time3 = time.time()
+
 			self.A.append(configPoidsMin) # on ajoute le noeud définitif à A
 			self.B.remove(configPoidsMin) # on retire le noeud définitif de B
-			time1 = time.time()
-			self.graphe.constructNoeuds(configPoidsMin, self.B)
-			time2 = time.time()
-			print("temps de construction du graphe ---->", time2 - time1)
+			self.graphe.constructNoeuds(configPoidsMin, self.B) # ajout des noeuds inexistants et maj de la taille du chemin
 
 			# initialisation
 			poidsMin = math.inf
 			noeudCheminMin = None
 
 			for noeudNotA in self.B: # pour chaque noeud dans B
-				for arete in noeudNotA.getAretes(): # pour chaque arete reliant B à A (aucune arete ne relie deux noeuds de B)
-					noeudA = arete.getExtremite(noeudNotA) # on récupère le noeud dans A
-					noeudNotA = self.majLongueurChemin(arete, noeudNotA, noeudA) # on met à jour la taille du chemin de noeud de B
-					poidsMin, noeudCheminMin = self.majPoidsMin(poidsMin, arete, noeudNotA, noeudA, noeudCheminMin) # on met à jour poids min et noeud chemin min
+				poidsMin, noeudCheminMin = self.majPoidsMin(poidsMin, noeudNotA, noeudCheminMin) # on met à jour poids min et noeud chemin min
 
 			configPoidsMin = noeudCheminMin # on récupère le chemin le plus court et on itère
 			print(configPoidsMin.getLongueurChemin())
-			time4 = time.time()
-			print("temps while --->", time4 - time3)
 
 		print("\nlongueur minimale trouvée : ", configPoidsMin.getLongueurChemin(), "\n")
-		[print(configPoidsMin.getHistorique()[i]) for i in range(len(configPoidsMin.getHistorique()))]
+		[print(configPoidsMin.getHistorique()[i][0]) for i in range(len(configPoidsMin.getHistorique()))]
 		stop_time = time.time()
 		print("temps total ---->", stop_time - start_time, " sec")
 		
@@ -64,17 +56,10 @@ class Dijkstra:
 					return True
 		return False
 
-	def majLongueurChemin(self, arete, noeud, noeudDefinitif):
-		""" retourne le noeud mis à jour si le chemin est plus court"""
-		if((noeudDefinitif.getLongueurChemin() + arete.getPoids()) < noeud.getLongueurChemin()):
-			noeud.setLongueurChemin(noeudDefinitif.getLongueurChemin() + arete.getPoids())
-			noeud.setHistorique(noeudDefinitif.getHistorique() + [noeud.getConfig()])
-		return noeud
-
-	def majPoidsMin(self, poidsMin, arete, noeud, noeudDefinitif, noeudCheminMin):
+	def majPoidsMin(self, poidsMin, noeud, noeudCheminMin):
 		""" retourne poidsMin si le poidsMin est plus petit que celui fournit en paramètre"""
-		if((noeudDefinitif.getLongueurChemin() + arete.getPoids()) < poidsMin):
-			poidsMin = noeudDefinitif.getLongueurChemin() + arete.getPoids()
+		if(noeud.getLongueurChemin() < poidsMin):
+			poidsMin = noeud.getLongueurChemin()
 			noeudCheminMin = noeud
 		return poidsMin, noeudCheminMin
 
@@ -84,7 +69,7 @@ def main():
 # if __name__ == "__main__":
 
 	dijkstra = Dijkstra()
-	conf = Configuration.readFile("../puzzles/avancé/jam30.txt")
+	conf = Configuration.readFile("../puzzles/débutant/jam1.txt")
 	noeud = Noeud(conf)
 	dijkstra.launchDijkstra(conf, 8)
 

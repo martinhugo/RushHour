@@ -234,12 +234,10 @@ class LPSolver :
                 lors d'un mouvement, le marqueur du véhicule est bien mis à jour (7)
         """
         for k in range(1, self.nbMove):
-
             # le nombre de véhicule déplacé au tour k
             nbVehiculeMoved = LinExpr()
 
             for idVehicule in self.y.keys():
-
                 # le nombre de position du véhicule
                 nbVehiculePosition = LinExpr()
 
@@ -249,11 +247,10 @@ class LPSolver :
                     for l in self.possiblesMarqueurs[idVehicule]:
                         if j != l:
                             # ajoute la variable mouvement du vehicule i de j à l au tour k
-                            nbVehiculeMoved.addTerms(1, self.y[idVehicule][j][l][k]) 
-                            
-                            
+                            nbVehiculeMoved.addTerms(1, self.y[idVehicule][j][l][k])            
                             self.model.addConstr(self.y[idVehicule][j][l][k] - self.x[idVehicule][l][k], GRB.LESS_EQUAL, 0)
                             self.model.addConstr(self.y[idVehicule][j][l][k] - self.x[idVehicule][j][k-1], GRB.LESS_EQUAL, 0)
+                            # ajouter une contrainte sur si il y a pas de mouvement partant de x, son marqueur reste inchangé
                             #self.model.addConstr(self.y[idVehicule][j][l][k-1] - self.x[idVehicule][l][k], GRB.LESS_EQUAL, 0) # (7)
 
                             # idVehicule peut se déplacer de j à l uniquement si cet espace est vide au tour précédent

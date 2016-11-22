@@ -3,8 +3,15 @@
 from vehicule import *
 import math
 from listTools import *
+from copy import deepcopy, copy
 import time
 """ Contient l'ensemble des classes et types nécessaire à la representation d'une configuration dans le jeu RushHour. """
+
+
+
+
+
+
 
 class Configuration:
 
@@ -13,32 +20,40 @@ class Configuration:
         self.constructConfiguration()
         self.nbCoupMax = nbCoupMax
 
+
     def getConfiguration(self):
         """Retourne self.configuration """
         return self.configuration
+
 
     def setConfiguration(self, config):
         """ utilisé dans le cas de Dijkstra pour la création des noeuds"""
         self.configuration = config
         
+
     def setNbCoupMax(self, value):
         """ Modifie la valeur de self.nbCoupMax """
         self.nbCoupMax = value
 
+
     def getNbCoupMax(self):
         return self.nbCoupMax
+
 
     def setVehicules(self, vehicules):
         """ Modifie la valeur de self.vehicules """
         self.vehicules = list(vehicules)
 
+
     def getVehicules(self):
         """ Retourne self.vehicules """
         return self.vehicules 
 
+
     def getPositionsVehicles(self):
         """ retourne un dictionnaire associant la liste de toutes les cases occupées par un véhicule"""
         return self.positionsVehicules
+
 
     def constructConfiguration(self):
         """ Construit la configuration de base, initialise l'attribut configuration en fonction de l'attribut véhicule.
@@ -53,6 +68,7 @@ class Configuration:
                 configuration[i] = vehicule
 
         self.configuration = configuration
+
 
     @staticmethod
     def readFile(path):
@@ -69,6 +85,7 @@ class Configuration:
         content = content[2:]
         vehicules = Configuration.constructVehicules(content)
         return Configuration(vehicules)
+
 
     @staticmethod
     def constructVehicules(content):
@@ -134,6 +151,7 @@ class Configuration:
     def allPossiblePositionsForAVehicle(self, vehicle):
         """ retourne la liste, pour un véhicule, de toutes les cases que ce véhicule peut occuper, sans tenir compte des autres véhicules"""
 
+
         marqueur = vehicle.getMarqueur()
         orientation = vehicle.getOrientation()
 
@@ -149,11 +167,13 @@ class Configuration:
     def allPossiblePositionsForAllVehicles(self):
         """ retourne un dictionnaire associant à un véhicule la liste de toutes les cases que ce véhicule peut occuper, sans tenir compte des autres véhicules"""
 
+
         vehicles = self.getVehicules()
         possibleMoves = {}
         for vehicle in vehicles:
             possibleMoves[vehicle.getIdVehicule()] = self.allPossiblePositionsForAVehicle(vehicle)
         return possibleMoves
+
 
     def possiblePositionForAVehicle(self, vehicle):
         """ Retourne la liste de toutes les positions effectivement possibles d'un véhicule """
@@ -163,6 +183,7 @@ class Configuration:
         listPositionVehicle = self.removeCaseSaut(vehicle, listPositionVehicle)
 
         return listPositionVehicle
+
 
     def removeCaseCommun(self, vehicle, listPositionVehicle):
         """ retire toutes les cases en commun entre un véhicule et tous les autres, retourne la liste des mouvements possibles sans ces cases"""
@@ -176,6 +197,7 @@ class Configuration:
             listPositionVehicle = ListTools.difference(listPositionVehicle, ListTools.addToList(listPositionOtherVehicles, - value * orientation))
         return listPositionVehicle
 
+
     def unionCasesOtherVehicles(self, vehicle):
         """ retourne la liste de toutes les cases occupées par les véhicules autres que le véhicule passé en paramètre """
 
@@ -185,6 +207,7 @@ class Configuration:
                 # liste de toutes les cases occupées par tous les autres véhicules
                 listPositionOtherVehicles = ListTools.union(listPositionOtherVehicles, self.getPositionsVehicles()[otherVehicle.getIdVehicule()])
         return listPositionOtherVehicles
+
 
     def removeCaseSaut(self, vehicle, listPositionVehicle):
         """ retire toutes les cases qui nécessitent de sauter par dessus un véhicule """
@@ -205,6 +228,7 @@ class Configuration:
 
         return listPositionVehicle
 
+
     def possiblePositionForAllVehicle(self):
         """ retourne un dictionnaire associant la liste de tous les déplacements effectivement possibles pour un véhicule"""
 
@@ -215,6 +239,7 @@ class Configuration:
                 dicoPositions[vehicle] = positionsPossibles
         return dicoPositions
 
+
     def getPossiblePosition(self):
         """ retourne l'ensemble des positions possibles pour tous les véhicules"""
         self.initPositionsVehicules()
@@ -223,11 +248,47 @@ class Configuration:
 ##########################################################################################################################################
 ##########################################################################################################################################
 ##########################################################################################################################################
-    
+    @staticmethod
+    def verifCondition(config):
+        """ si le noeud sélectionné permet de conclure qu'on a fini, ie voiture "g" en position 16"""
+        vehicules = config.getVehicules()
+        for vehicule in vehicules:
+            if(vehicule.getIdVehicule() == 'g'):
+                if(vehicule.getMarqueur() == 16):
+                    return True
+        return False
+        
     @staticmethod
     def getStrConfig(config1):
         """ cette méthode retourne vrai si les 2 configurations données en paramètre sont identiques"""
         return str(config1)
+
+
+    @staticmethod
+    def newConfig(configInit, vehicule, newPosition):
+        """ crée une nouvelle config à partir d'un véhicule et d'une nouvelle position, retourne la nouvelle config"""
+
+
+
+        # TODO ---> à modifier en deepcopy par la suite
+
+
+
+
+        newConfig = copy(configInit)
+        newVehicule = copy(vehicule)
+        newVehicule.setMarqueur(newPosition)
+
+        listVehicules = copy(configInit.getVehicules())
+        
+        listVehicules.remove(vehicule)
+        listVehicules.append(newVehicule)
+        
+
+        newConfig.setVehicules(listVehicules)
+        newConfig.constructConfiguration()
+
+        return newConfig
 
     def __str__(self):
         """ Retourne la chaine de caractère associé à la configuration.
@@ -247,6 +308,15 @@ class Configuration:
     def __repr__(self):
         """ Cf __str__ """
         return str(self)
+
+
+
+
+
+
+
+
+
 
 
 if __name__ == "__main__":

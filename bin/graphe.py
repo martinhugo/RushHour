@@ -2,7 +2,6 @@
 
 import math
 from configuration import *
-from copy import copy
 
 
 
@@ -30,6 +29,9 @@ class Noeud:
 	def getLongueurChemin(self):
 		""" retourne la longueur du chemin """
 		return self.historique[-1][1]
+
+	def setLongueurChemin(self, longueurChemin):
+		self.historique[-1][1] = longueurChemin
 
 	def getHistorique(self):
 		""" retourne l'historique du noeud"""
@@ -64,72 +66,60 @@ class Noeud:
 
 
 
+
 class Graphe:
 
 	def __init__(self):
 		self.noeuds = []
 		self.aretes = []
 
-	############################### GETTERS ET SETTERS #########################################
 
 	def getNoeuds(self):
 		""" retourne la liste des noeuds du graphe"""
 		return self.noeuds
 
-	def getNoeud(self, config):
-		""" retourne les noeuds selon la config donnée en paramètre"""
-		return [item for item in self.noeuds if self.compare2Config(item.getConfig(), config)]
-
-	######################################## AUTRES METHODES ###################################
 
 	def addNoeud(self, noeud):
 		self.noeuds.append(noeud)
+			
 
-	def addNoeuds(self, noeuds):
-		[self.addNoeud(noeud) for noeud in noeuds]
-			
-	def removeNoeud(self, noeud):
-		self.noeuds.remove(noeud)
-			
-	def constructNoeuds(self, noeud, B):
+	def constructNoeuds(self, noeud, B, flag = "RHM"):
 		""" construit des noeuds en fonction d'un dictionnaire passé en paramètre"""
-		dico = noeud.getConfig().getPossiblePosition()
-		# pour chaque véhicule, pour chaque position possible du véhicule
-		[[self.constructNoeud(noeud, Noeud(self.newConfig(noeud.getConfig(), objet, marqueur)) , B) for marqueur in dico[objet]] for objet in dico.keys()]
-						
-	def constructNoeud(self, noeudDefinitif, noeudToAdd, B):
-		""" ajoute le noeud et l'arête correspondant dans le graphe si le noeud et l'arete ne sont pas déjà dans le graphe"""
-		if(not self.verifNoeudInGraphe(noeudToAdd)): # si noeud inexistant
 
-			noeudToAdd.setHistorique([noeudDefinitif.getHistorique()] + [(noeudToAdd.getConfig(), noeudDefinitif.getLongueurChemin() + 1)])
-			self.addNoeud(noeudToAdd)
-			B.append(noeudToAdd)
+		dico = noeud.getConfig().getPossiblePosition()
+		poids = 1
+
+		# pour chaque véhicule, pour chaque position possible du véhicule
+		for objet in dico.keys():
+
+			listVehicules = noeud.getConfig().getVehicules()
+			marqueurObjet = listVehicules[listVehicules.index(objet)].getMarqueur()
+			orientationObjet = listVehicules[listVehicules.index(objet)].getOrientation()
+
+			for marqueur in dico[objet]:
+
+				if(flag != "RHM"):
+					poids = abs(marqueurObjet - marqueur)/orientationObjet
+
+				n = self.verifNoeudInGraphe(Noeud(Configuration.newConfig(noeud.getConfig(), objet, marqueur)))
+
+				if(len(n.getHistorique()) == 0): # si le noeud n'a jamais été crée
+					self.constructNoeud(noeud, n, B, poids)
+
+				elif(n.getLongueurChemin() > noeud.getLongueurChemin() + poids): # si noeud déjà créé et chemin plus petit possible
+					n.setLongueurChemin(noeud.getLongueurChemin() + poids)
+				
+
+	def constructNoeud(self, noeudDefinitif, noeudToAdd, B, poids):
+		""" ajoute le noeud et l'arête correspondant dans le graphe si le noeud et l'arete ne sont pas déjà dans le graphe"""
+		noeudToAdd.setHistorique(noeudDefinitif.getHistorique() + [[noeudToAdd.getConfig(), noeudDefinitif.getLongueurChemin() + poids]])
+		self.addNoeud(noeudToAdd)
+		B.append(noeudToAdd)
+
 
 	def verifNoeudInGraphe(self, noeud):
-		""" retourne vrai si le noeud est dans le graphe"""
+		""" retourne vrai si le noeud est dans le graphe"""# revoir commentaire
 		for n in self.getNoeuds():
 			if(Noeud.compare2Noeuds(n, noeud)):
-				return True
-		return False
-
-	####################################### METHODES STATIQUES #########################################
-
-	
-
-	@staticmethod
-	def newConfig(configInit, vehicle, newPosition):
-		""" crée une nouvelle config à partir d'un véhicule et d'une nouvelle position, retourne la nouvelle config"""
-
-		newConfig = copy(configInit)
-		newVehicle = copy(vehicle)
-		newVehicle.setMarqueur(newPosition)
-
-		listVehicles = copy(configInit.getVehicules())
-
-		listVehicles.remove(vehicle)
-		listVehicles.append(newVehicle)
-
-		newConfig.setVehicules(listVehicles)
-		newConfig.constructConfiguration()
-
-		return newConfig
+				return n
+		return noeud

@@ -24,7 +24,7 @@ class Dijkstra:
 		self.graphe.addNoeud(configPoidsMin) # ajout du noeud dans le graphe
 		self.B.append(configPoidsMin) # ajout du premier noeud dans B (tant que pas dans la boucle, pas définitif)
 
-		while(not Configuration.verifCondition(configPoidsMin.getConfig())):
+		while(not configPoidsMin == None and not Configuration.verifCondition(configPoidsMin.getConfig()) and nbMax > len(configPoidsMin.getHistorique())-1):
 
 			self.A.append(configPoidsMin) # on ajoute le noeud définitif à A
 			self.B.remove(configPoidsMin) # on retire le noeud définitif de B
@@ -39,11 +39,16 @@ class Dijkstra:
 
 			configPoidsMin = noeudCheminMin # on récupère le chemin le plus court et on itère
 
-		[print(configPoidsMin.getHistorique()[i][0]) for i in range(len(configPoidsMin.getHistorique()))]
-		print("\nlongueur minimale trouvée : ", configPoidsMin.getLongueurChemin(), "\n")
+		if(configPoidsMin == None):
+			print("Il n'existe pas de solution réalisable pour cette grille")
+		elif nbMax > len(configPoidsMin.getHistorique()):
+			[print(configPoidsMin.getHistorique()[i][0]) for i in range(len(configPoidsMin.getHistorique()))]
+			print("\nlongueur minimale trouvée : ", configPoidsMin.getLongueurChemin(), "\n")
+		else:
+			print("pas de solution trouvée en moins de", nbMax, "pas.")
 
 		stop_time = time.time()
-		print("temps total ---->", stop_time - start_time, " sec")
+		print("temps total ---->", round(stop_time - start_time, 2), " sec")
 		
 
 	@staticmethod
@@ -55,14 +60,13 @@ class Dijkstra:
 		return poidsMin, noeudCheminMin
 
 
-
 def main():
 # if __name__ == "__main__":
 
 	dijkstra = Dijkstra()
-	conf = Configuration.readFile("../puzzles/débutant/jam9.txt")
+	conf = Configuration.readFile("../puzzles/débutant/jam1.txt")
 	noeud = Noeud(conf)
-	dijkstra.launchDijkstra(conf, 8, flag = "RHM")
+	dijkstra.launchDijkstra(conf, 10, flag = "RHM")
 
 main()
 

@@ -16,7 +16,6 @@ class Noeud:
 	def __init__(self, config):
 		self.config = config
 		self.id = Configuration.getStrConfig(config)
-		self.longueurChemin = math.inf
 		self.historique = []
 
 	def getId(self):
@@ -41,18 +40,6 @@ class Noeud:
 		""" modifie l'historique du noeud"""
 		self.historique = historique
 
-	def addAreteReliee(self, arete):
-		self.aretesReliees.append(arete)
-
-	def getNoeudsRelies(self):
-		return self.noeudsRelies
-
-	def addArete(self, arete):
-		self.aretes.append(arete)
-
-	def getAretes(self):
-		return self.aretes
-
 	@staticmethod
 	def compare2Noeuds(noeud1, noeud2):
 		""" cette fonction retourne vrai si les 2 noeuds donnés en paramètres ont la meme config"""
@@ -71,18 +58,14 @@ class Graphe:
 
 	def __init__(self):
 		self.noeuds = []
-		self.aretes = []
-
 
 	def getNoeuds(self):
 		""" retourne la liste des noeuds du graphe"""
 		return self.noeuds
 
-
 	def addNoeud(self, noeud):
 		self.noeuds.append(noeud)
 			
-
 	def constructNoeuds(self, noeud, B, flag = "RHM"):
 		""" construit des noeuds en fonction d'un dictionnaire passé en paramètre"""
 
@@ -116,10 +99,26 @@ class Graphe:
 		self.addNoeud(noeudToAdd)
 		B.append(noeudToAdd)
 
-
 	def verifNoeudInGraphe(self, noeud):
 		""" retourne vrai si le noeud est dans le graphe"""# revoir commentaire
 		for n in self.getNoeuds():
 			if(Noeud.compare2Noeuds(n, noeud)):
 				return n
 		return noeud
+
+
+	@staticmethod
+	def countConfig(conf, i):
+		""" compte le nombre de configuration atteignables en i pas depuis conf"""
+
+		graphe = Graphe()
+		flag = "RHM"
+		config = Noeud(conf)
+		config.setHistorique([[conf, 0]])
+		A = [config]
+
+		while(not config == None and i > (len(config.getHistorique())-1)):
+			A.remove(config) # on retire le noeud définitif de A
+			graphe.constructNoeuds(config, A, flag) # ajout des noeuds inexistants et maj de la taille du chemin
+			config = A[0]
+		return len(graphe.getNoeuds())-1

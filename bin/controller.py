@@ -7,6 +7,7 @@
 """
 import random
 import copy
+from threading import Thread
 
 
 from configuration import *
@@ -69,7 +70,11 @@ class ConfigController:
         else:
             solver = Dijkstra(self.configuration, self.nbMoveMax)
 
-        self.nextConfigs = solver.solve()
+        # Threader juste cette instruction, recuperer le résultat ou arrêter au bout de 120s.
+
+        #self.nextConfigs = solver.solve()
+
+        self.mainWindow.showProgressDialog()
         print(len(self.nextConfigs))
     
 
@@ -92,7 +97,14 @@ class ConfigController:
         
 
 
+def Solver(Thread):
 
+    def __init__(self, solver):
+        self.solver = solver
+        self.configs = []
+
+    def run(self):
+        self.configs = self.solver.solve()
 
 
     

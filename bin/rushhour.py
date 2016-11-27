@@ -9,7 +9,7 @@
 import sys
 import os
 
-from PyQt5.QtWidgets import (QApplication, QMainWindow, QAction, QDialog, QFileDialog, QToolBar, QWidget)
+from PyQt5.QtWidgets import (QApplication, QMainWindow, QAction, QDialog, QFileDialog, QToolBar, QWidget, QProgressBar)
 from PyQt5.QtGui import QIcon
 from controller import *
 from dialogs import *
@@ -55,6 +55,7 @@ class Window (QMainWindow):
         """
         self.createToolBar()
         self.setWindowTitle(WINDOW_TITLE)
+        self.statusBar().showMessage("Please, choose your configuration.")
         self.show()
 
     def createToolBar(self):
@@ -99,13 +100,30 @@ class Window (QMainWindow):
         settingsDialog = SettingsDialog(self)
         settingsDialog.exec_()
 
+    def showProgressDialog(self):
+        """ Opens a settings dialog.
+            Params: none
+            Return: none
+        """
+        print("COUCOU")
+        progressBar = QProgressBar()
+        progressBar.maximum = 120
+        self.statusBar().addPermanentWidget(progressBar)
+        print("CAVA?")
+        
+        i=0
+        while i != 120:
+            print(i)
+            time.sleep(1)
+            progressBar.value = i
+            i+=1
+
 
     def fileSelectDialog(self):
         """ Opens a file selection dialog and display on the grid the selected file.
             Params: none
             Return: none
-        """
-        
+        """        
         file_dialog = QFileDialog()
         file_dialog.setFileMode(QFileDialog.ExistingFiles)
 
@@ -113,7 +131,7 @@ class Window (QMainWindow):
             print(file_dialog.selectedFiles())
             self.controller.setConfiguration(file_dialog.selectedFiles()[0])
 
-
+        self.statusBar().showMessage("Ready")
 
 
 if __name__ == "__main__":

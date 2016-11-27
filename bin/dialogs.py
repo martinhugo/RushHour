@@ -4,7 +4,8 @@
 """ Module containing the Dialog boxes for the GooDoc Application.
 """
 
-from PyQt5.QtWidgets import (QDialog, QVBoxLayout, QRadioButton, QDialogButtonBox, QLineEdit)
+from PyQt5.QtWidgets import (QDialog, QVBoxLayout, QRadioButton, QDialogButtonBox, QLineEdit, QProgressBar)
+from PyQt5.QtCore import Qt
 from controller import *
 
 
@@ -86,4 +87,53 @@ class SettingsDialog(QDialog):
                 self.parent().controller.setNbMoveMax(int(nbMoveMax))
             except ValueError:
                 print(nbMoveMax + " ne peut être converti en entier.")
+
+
+class ProgressDialog(QDialog):
+    """ Inherits: QDialog
+        This class defines a dialog box.
+        This dialog box is composed of two radio buttons, which let the user choose the order of methods and classes in the generated documentation.
+    """
+
+    def __init__(self, parent=None):
+        """ Constructor
+            Params: parent -> the object's parent
+            Return: self
+            The object is initialized with the super-constructror, the GUI with the initUI method.
+        """
+        super().__init__(parent)
+        self.initUI()
+
+
+    def initUI(self):
+        """ Object method
+            Params: None
+            Return: None
+            This method sets the dialog box's layout.
+            The Dialog box conatains two radio buttons and OK/Cancel buttons.
+            sizeHint() sets the box to an ideal size.
+        """
+
+        #creating layout
+        settings_layout = QVBoxLayout()
+
+        #creating Radio buttons
+        self.progressBar = QProgressBar()
+        self.progressBar.maximum = 120
+        self.progressBar.setOrientation(Qt.Vertical)
+
+        #adding layout to dialog
+        self.setLayout(settings_layout);
+        self.sizeHint()
+
+
+    def exec_(self):
+        """ Object method.
+            This method displays the window and launches its event loop. 
+            Changes are commited when the OK button is pressed.
+        """ 
+
+        super().exec_()
+           
+
 

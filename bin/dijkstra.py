@@ -62,16 +62,19 @@ class Dijkstra:
 		# si tout le graphe a été parcouru sans qu'une solution ne soit trouvée
 		if(configPoidsMin == None):
 			#print("Il n'existe pas de solution réalisable pour cette grille")
-			return [config]
+			return []
+
 		# si on a trouvé une solution
 		elif self.getNbMax() > len(configPoidsMin.getHistorique()):
 			# [print(configPoidsMin.getHistorique()[i][0]) for i in range(len(configPoidsMin.getHistorique()))]
 			# print("\nlongueur minimale trouvée : ", configPoidsMin.getLongueurChemin(), "\n")
-			return [configPoidsMin.getHistorique()[i][0] for i in range(len(configPoidsMin.getHistorique()))]
-		# si on a pas trouvé de solution en un nombre de pas < nbMax
+			listConfig = [configPoidsMin.getHistorique()[i][0] for i in range(len(configPoidsMin.getHistorique()))]
+			listConfig.reverse()
+			return listConfig	# si on a pas trouvé de solution en un nombre de pas < nbMax
+
 		else:
 			# print("pas de solution trouvée en moins de", nbMax, "pas.\n")
-			return [config]
+			return []
 
 		
 

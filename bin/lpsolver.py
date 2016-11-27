@@ -45,6 +45,7 @@ class LPSolver :
                                 config = Configuration.newConfig(config, config.getVehicules()[index], l)
                                 listOfConfig.append(config)
 
+        listOfConfig.reverse()
         return listOfConfig
 
 

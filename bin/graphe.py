@@ -15,30 +15,36 @@ class Noeud:
 
 	def __init__(self, config):
 		self.config = config
-		self.id = Configuration.getStrConfig(config)
+		self.id = str(config)
 		self.historique = []
 
 	def getId(self):
 		return self.id
 
+
 	def getConfig(self):
 		""" Retourne la configuration correpondant au noeud """
 		return self.config
+
 
 	def getLongueurChemin(self):
 		""" retourne la longueur du chemin """
 		return self.historique[-1][1]
 
+
 	def setLongueurChemin(self, longueurChemin):
 		self.historique[-1][1] = longueurChemin
+
 
 	def getHistorique(self):
 		""" retourne l'historique du noeud"""
 		return self.historique
 
+
 	def setHistorique(self, historique):
 		""" modifie l'historique du noeud"""
 		self.historique = historique
+
 
 	@staticmethod
 	def compare2Noeuds(noeud1, noeud2):
@@ -54,18 +60,25 @@ class Noeud:
 
 
 
+
+
+
+
 class Graphe:
 
 	def __init__(self):
 		self.noeuds = []
 
+
 	def getNoeuds(self):
 		""" retourne la liste des noeuds du graphe"""
 		return self.noeuds
 
+
 	def addNoeud(self, noeud):
 		self.noeuds.append(noeud)
 			
+
 	def constructNoeuds(self, noeud, B, flag = "RHM"):
 		""" construit des noeuds en fonction d'un dictionnaire passé en paramètre"""
 
@@ -93,11 +106,13 @@ class Graphe:
 					n.setLongueurChemin(noeud.getLongueurChemin() + poids)
 				
 
+
 	def constructNoeud(self, noeudDefinitif, noeudToAdd, B, poids):
 		""" ajoute le noeud et l'arête correspondant dans le graphe si le noeud et l'arete ne sont pas déjà dans le graphe"""
 		noeudToAdd.setHistorique(noeudDefinitif.getHistorique() + [[noeudToAdd.getConfig(), noeudDefinitif.getLongueurChemin() + poids]])
 		self.addNoeud(noeudToAdd)
 		B.append(noeudToAdd)
+
 
 	def verifNoeudInGraphe(self, noeud):
 		""" retourne vrai si le noeud est dans le graphe"""# revoir commentaire

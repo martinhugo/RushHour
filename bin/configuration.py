@@ -257,11 +257,6 @@ class Configuration:
                 if(vehicule.getMarqueur() == 16):
                     return True
         return False
-        
-    @staticmethod
-    def getStrConfig(config1):
-        """ cette méthode retourne vrai si les 2 configurations données en paramètre sont identiques"""
-        return str(config1)
 
 
     @staticmethod

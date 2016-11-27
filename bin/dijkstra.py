@@ -9,31 +9,40 @@ from graphe import *
 class Dijkstra:
 	""" """
 
-	def __init__(self):
+	def __init__(self, config, nbMax, flag = "RHM"):
 		self.graphe = Graphe()
+		self.config = config
+		self.nbMax = nbMax
 		self.B = [] # correspond aux noeuds de chemin non définitif
+		self.solution = self.solve(flag)
+
+
+	def getConfig(self):
+		return self.config
+
+	def getNbMax(self):
+		return self.nbMax
+
+	def getSolution(self):
+		return self.solution
 
 
 
 
 
 
-
-
-
-
-	def launchDijkstra(self, config, nbMax, flag = "RHM"):
+	def solve(self, flag = "RHM"):
 
 		start_time = time.time()
 
-		configPoidsMin = Noeud(config)
-		configPoidsMin.setHistorique([[config, 0]])
+		configPoidsMin = Noeud(self.getConfig())
+		configPoidsMin.setHistorique([[self.getConfig(), 0]])
 
 		self.graphe.addNoeud(configPoidsMin) # ajout du noeud dans le graphe
 		self.B.append(configPoidsMin) # ajout du premier noeud dans B (tant que pas dans la boucle, pas définitif)
 
 
-		while(not configPoidsMin == None and not Configuration.verifCondition(configPoidsMin.getConfig()) and nbMax > (len(configPoidsMin.getHistorique())-1)):
+		while(not configPoidsMin == None and not Configuration.verifCondition(configPoidsMin.getConfig()) and self.getNbMax() > (len(configPoidsMin.getHistorique())-1)):
 
 			self.B.remove(configPoidsMin) # on retire le noeud définitif de B
 			self.graphe.constructNoeuds(configPoidsMin, self.B, flag) # ajout des noeuds inexistants et maj de la taille du chemin
@@ -55,7 +64,7 @@ class Dijkstra:
 			#print("Il n'existe pas de solution réalisable pour cette grille")
 			return [config]
 		# si on a trouvé une solution
-		elif nbMax > len(configPoidsMin.getHistorique()):
+		elif self.getNbMax() > len(configPoidsMin.getHistorique()):
 			# [print(configPoidsMin.getHistorique()[i][0]) for i in range(len(configPoidsMin.getHistorique()))]
 			# print("\nlongueur minimale trouvée : ", configPoidsMin.getLongueurChemin(), "\n")
 			return [configPoidsMin.getHistorique()[i][0] for i in range(len(configPoidsMin.getHistorique()))]
@@ -83,10 +92,10 @@ class Dijkstra:
 def main():
 # if __name__ == "__main__":
 
-	dijkstra = Dijkstra()
 	conf = Configuration.readFile("../puzzles/avancé/jam30.txt")
-	noeud = Noeud(conf)
-	dijkstra.launchDijkstra(conf, 35, flag = "RHM")
+	dijkstra = Dijkstra(conf, 35, flag = "RHM")
+	print(dijkstra.getSolution())
+	# dijkstra.launchDijkstra(conf, 35, flag = "RHM")
 	# print("nombre de configurations atteignables en 15 pas -->", Graphe.countConfig(conf, 15))
 
 main()

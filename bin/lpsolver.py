@@ -2,19 +2,18 @@
 
 from configuration import *
 from configuration import *
-# from gurobipy import *
+from gurobipy import *
 
 
 class LPSolver :
-    """ 
-        va définir les variables de contrainte nécessaires pour la résolution par PL. 
+    """ Va définir les variables de contrainte nécessaires pour la résolution par PL. 
         Positions2Points : p[j][l] : ensemble des positions comprises entre j et l. -> TODO
         
     """
 
-    def __init__(self, config):
+    def __init__(self, config, nbCoupMax):
         self.config = config
-        self.nbMove = config.getNbCoupMax() # nombre de mouvements max autorisés
+        self.nbMove = nbCoupMax
         self.model = Model()
         self.marqueurs = range(36)
         self.moves = range(self.nbMove+1)
@@ -23,54 +22,28 @@ class LPSolver :
         self.createDecisionsVariables()
         self.createObjective()
         self.createConstraints()
-        self.solve("YENAMARRE")
-        self.varToConfig("YENAMARRE")
-        #self.model.optimize()
 
 
-    def solve(self, path):
+    def solve(self):
         """ Demande la résolution du modèle et écrit l'ensemble des variables valeurs de y[i][j][k][l] dans le fichier de chemin path """
         self.model.optimize()
+        return self.createConfigurations()
 
-        content = ""
-        for k in self.moves:
-            for idVehicule in self.y.keys():
-                    for j in self.possiblesMarqueurs[idVehicule]:
-                        #print("x", k, idVehicule, j, self.x[idVehicule][j][k].X)
-                        
-                        for l in self.possiblesMarqueurs[idVehicule]:
-                            if j != l:
-                                if self.y[idVehicule][j][l][k].X == 1:
-                                    content += "{},{},{}\n".format(idVehicule,j, l)
-
-        for idVehicule in self.y.keys():
-                for j in self.possiblesMarqueurs[idVehicule]:
-                    print("x", idVehicule, j, self.x[idVehicule][j][0].X, self.x[idVehicule][j][1].X, self.x[idVehicule][j][2].X)
-                
-
-        with open(path, "w") as file:
-            file.write(content)
-
-
-    def varToConfig(self, path):
-        """ à partir d'un fichier, transforme une suite d'instructions de la forme : 
-            voiture t passe de la position i à la position j en un tableau de configurations correspondantes
-        """
-
-        with open(path, "r") as file:
-            content = file.read()
-        content = [word for line in content.split("\n") for word in line.split(",") if len(word)>0]
-
+    def createConfigurations(self):
+        """ Retourne l'ensemble des configurations de la configuration initiale à finale proposant une résolution optimale du jeu """
         config = self.config
         listOfConfig = [config]
 
-        for i in range(0, len(content), 3):
-
-            indexes = [config.getVehicules()[j].getIdVehicule() for j in range(0, len(config.getVehicules()))]
-            indice = indexes.index(content[i]) # indice correspondant à la voiture concernée
-
-            config = Configuration.newConfig(config, config.getVehicules()[indice], int(content[i+2]))
-            listOfConfig.append(config)
+        for k in self.moves:
+            for idVehicule in self.y.keys():
+                for j in self.possiblesMarqueurs[idVehicule]:
+                    for l in self.possiblesMarqueurs[idVehicule]:
+                        if j != l:
+                            if self.y[idVehicule][j][l][k].X == 1:
+                                ids = [config.getVehicules()[n].getIdVehicule() for n in range(0, len(config.getVehicules()))]
+                                index = ids.index(idVehicule) # indice correspondant à la voiture concernée
+                                config = Configuration.newConfig(config, config.getVehicules()[index], l)
+                                listOfConfig.append(config)
 
         return listOfConfig
 
@@ -270,20 +243,23 @@ class LPSolver :
                 # le nombre de position du véhicule
                 nbVehiculePosition = LinExpr()
                 nbVehiculeMovement = LinExpr()
-
+                
                 for j in self.possiblesMarqueurs[idVehicule]:
                     nbVehiculePosition.addTerms(1, self.x[idVehicule][j][k])
+                    
+                    nbMovementFromJ = LinExpr()
+                    nbMovementToJ = LinExpr()
 
                     for l in self.possiblesMarqueurs[idVehicule]:
                         if j != l and k!=0:
                                 nbVehiculeMovement.addTerms(1, self.y[idVehicule][j][l][k])
-                                nbVehiculeMoved.addTerms(1, self.y[idVehicule][j][l][k]) 
-                                #self.model.addConstr(self.x[idVehicule][l][k] - self.y[idVehicule][j][l][k] - self.x[idVehicule][l][k-1], GRB.EQUAL, 0)           
-                                
-                                # si il bouge son marqueur est bien mis à jour
-                                self.model.addConstr(self.y[idVehicule][j][l][k] - self.x[idVehicule][l][k], GRB.LESS_EQUAL, 0) # UTILE?
+                                nbVehiculeMoved.addTerms(1, self.y[idVehicule][j][l][k])
+                                nbMovementFromJ.addTerms(1, self.y[idVehicule][j][l][k])
+                                nbMovementToJ.addTerms(1, self.y[idVehicule][l][j][k])                         
+
+                                #self.model.addConstr(self.y[idVehicule][j][l][k] - self.x[idVehicule][l][k], GRB.LESS_EQUAL, 0) # UTILE?
                                 # un mouvement est possible depuis une position ou le marqueur à la valeur 1
-                                self.model.addConstr(self.y[idVehicule][j][l][k] - self.x[idVehicule][j][k-1], GRB.LESS_EQUAL, 0) #UTILE?
+                                #self.model.addConstr(self.y[idVehicule][j][l][k] - self.x[idVehicule][j][k-1], GRB.LESS_EQUAL, 0) #UTILE?
                                 # le marqueur d'un véhicule ne bouge pas si il ne bouge pas
 
 
@@ -300,23 +276,25 @@ class LPSolver :
                                     self.model.addConstr(self.y[idVehicule][j][l][k], GRB.LESS_EQUAL, (1-nbVehiculeBetween)) # UTILE(4)
                     
                     
-
+                    self.model.addConstr(nbMovementFromJ - self.x[idVehicule][j][k-1], GRB.LESS_EQUAL, 0) # mouvement doivent partir d'une position valide
+                    self.model.addConstr(nbMovementToJ - self.x[idVehicule][j][k], GRB.LESS_EQUAL, 0) # mouvement arrive et mise à jour, nécessaire
                 # un véhicule n'est qu'a une seule position UTILE?
-                #self.model.addConstr(nbVehiculePosition, GRB.EQUAL, 1)
+                self.model.addConstr(nbVehiculePosition, GRB.EQUAL, 1) #un véhicule n'a qu'une position a tout instant
 
                 # UTILE, REFORMULER en plus simple ??
                 for j in self.possiblesMarqueurs[idVehicule]:
                     if k!=0:                
-                        self.model.addConstr(nbVehiculeMovement, GRB.GREATER_EQUAL, self.x[idVehicule][j][k] - self.x[idVehicule][j][k-1]) 
-                        self.model.addConstr(nbVehiculeMovement, GRB.GREATER_EQUAL, self.x[idVehicule][j][k-1] - self.x[idVehicule][j][k])
+                        self.model.addConstr(nbVehiculeMovement, GRB.GREATER_EQUAL, self.x[idVehicule][j][k] - self.x[idVehicule][j][k-1]) # si il n'y a pas de mouvement, pas de changement dans le marqueur
+                        #self.model.addConstr(nbVehiculeMovement, GRB.GREATER_EQUAL, self.x[idVehicule][j][k-1] - self.x[idVehicule][j][k])
 
             # si g n'est pas en 16, il y a un mouvement à ce tour
             if k!=0:
                 self.model.addConstr(nbVehiculeMoved - (1-self.x["g"][16][k-1]), GRB.EQUAL, 0) #(6)
             else:
-                self.model.addConstr(nbVehiculeMoved, GRB.EQUAL, 0) # UTILE?
+                self.model.addConstr(nbVehiculeMoved, GRB.EQUAL, 0) # UTILE? 
             # A chaque tour au plus un véhicule est bougé, utile dans notre conception ?
             #self.model.addConstr(nbVehiculeMoved, GRB.LESS_EQUAL, 1) #(5)  
+
 
     def addInitialisationConstraints(self):
         """ Ajoute les contraintes d'initialisation représentant la configuration courante """
@@ -329,16 +307,8 @@ class LPSolver :
 
 
                             
-def main(): 
-# if __name__ == "__main__":
-    conf = Configuration.readFile("../puzzles/débutant/jam6.txt")
-    print(conf)
-    conf.setNbCoupMax(50)
-    lp = LPSolver(conf)
-    
-    # [print(pl.getMatricePresence()[i]) for i in range(len(pl.getMatricePresence()))]
-    # [print(pl.getMatriceOccupe()[i]) for i in range(len(pl.getMatriceOccupe()))]
-    # print(pl.getPositions2Points())
-    # [print(pl.getPositionsVehicules()[i]) for i in range(len(pl.getPositionsVehicules()))]
 
-main()
+if __name__ == "__main__":
+    conf = Configuration.readFile("../puzzles/débutant/jam1.txt")
+    lp = LPSolver(conf, 50)
+    print(lp.solve())

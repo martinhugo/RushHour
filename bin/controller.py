@@ -5,12 +5,14 @@
     The application is started by launching this module.
     It contains the Window class and the main procedure.
 """
+import random
+import copy
+
 
 from configuration import *
 from displayer import *
-import random
-import copy
 from lpsolver import *
+from dijkstra import *
 
 class ConfigController:
     """ Permet toutes intéractions avec la configuration.
@@ -25,8 +27,8 @@ class ConfigController:
         self.nbMoveMax = nbMoveMax
         self.colors = colors
 
-        self.nextConfig = []
-        self.predConfig = []
+        self.nextConfigs = []
+        self.predConfigs = []
 
 
     def setConfiguration(self, path, initColors = True):
@@ -60,24 +62,38 @@ class ConfigController:
         self.colors["g"] = (random.randint(200, 255), random.randint(0, 50), random.randint(0,50))
         self.colors["0"] = (255, 255, 255)
 
-    def solve(self, path="solution.txt"):
-        if resolutionType == ResolutionType.LINEAR_PROGRAMMING:
-            solver = LPSolver(self.configuration)
-            solver.solve(path)
+    def solve(self):
+        """ Résoud la configuration selon le type de résolution demandée """
+        if self.resolutionType == ResolutionType.LINEAR_PROGRAMMING:
+            print(self.nbMoveMax)
+            solver = LPSolver(self.configuration, self.nbMoveMax)
+            self.nextConfigs = solver.solve()
+        else:
+            solver = Dijkstra()
+            self.nextConfigs = solver.launchDijkstra(self.configuration, self.nbMoveMax)
+
+        print(len(self.nextConfigs))
+    
+    def displayNextConfig(self):
+        """ Demande l'affichage par l'application de la configuration suivante """
+        print(len(self.nextConfigs), self.nextConfigs)
+        if(len(self.nextConfigs) != 0):
+            config = self.nextConfigs.pop()
+            self.predConfigs.append(config)
+            self.mainWindow.setCentralWidget(ConfigDisplayer(config, self.colors))
 
 
-    def createConfigurations(self, path="solution.txt"):
-        # with open(path, "r") as file:
-        #     content = file.read()
+    def displayPredConfig(self):
+        """ Demande l'affichage par l'application de la configuration précédente """
+        if(len(self.predConfigs) != 0):
+            config = self.predConfigs.pop()
+            self.nextConfigs.append(config)
+            self.mainWindow.setCentralWidget(ConfigDisplayer(config, self.colors))
+        
 
-        # config = copy.deepcopy(self.configuration)
-        # for line in content.strip("\n")
-        #     (idVehicule, j, l, k) = line.strip(",")
 
-        #     self.nextConfig.append(config)
 
-        #     config = deepcopy(config)
-        pass
+
 
     
 

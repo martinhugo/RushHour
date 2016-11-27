@@ -19,10 +19,14 @@ from displayer import *
 ADD_FILES_ICON = "../img/addFiles.png"
 START_ICON = "../img/start.png"
 SETTINGS_ICON = "../img/settings.png"
+NEXT_CONFIG_ICON = "../img/next.png"
+PRED_CONFIG_ICON = "../img/pred.png"
 
 # ToolTip
 ADD_FILES_TIP = "Add files"
 START_TIP = "Start generation"
+NEXT_CONFIG_TIP = "Next config"
+PRED_CONFIG_TIP = "Pred config"
 SETTINGS_TIP = "Settings"
 
 WINDOW_TITLE = "RUSH HOUR"
@@ -39,8 +43,8 @@ class Window (QMainWindow):
             Return: None
         """
         super().__init__()
-        self.initScreen()
         self.controller = ConfigController(self)
+        self.initScreen()
 
     def initScreen(self):
         """ This method sets up the screen of the application.
@@ -65,16 +69,28 @@ class Window (QMainWindow):
         addFileAction.triggered.connect(self.fileSelectDialog)
 
         resolveAction=QAction(QIcon(START_ICON), START_TIP, self)
+        resolveAction.triggered.connect(self.controller.solve)
         # resolveAction.setShortcut('Ctrl+K')
 
         settingsAction=QAction(QIcon(SETTINGS_ICON), SETTINGS_TIP, self)
         settingsAction.triggered.connect(self.settings)
-        # settingsAction.setShortcut('Ctrl+L')
+
+
+        nextConfigAction = QAction(QIcon(NEXT_CONFIG_ICON), NEXT_CONFIG_TIP, self)
+        nextConfigAction.triggered.connect(self.controller.displayNextConfig)
+
+        predConfigAction = QAction(QIcon(PRED_CONFIG_ICON), PRED_CONFIG_TIP, self)
+        predConfigAction.triggered.connect(self.controller.displayPredConfig)
+
+
         
         self.addToolBar(self.toolbar);
         self.toolbar.addAction(addFileAction)
         self.toolbar.addAction(resolveAction)
         self.toolbar.addAction(settingsAction)
+        self.toolbar.addAction(predConfigAction)
+        self.toolbar.addAction(nextConfigAction)
+
 
 
     def settings(self):

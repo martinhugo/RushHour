@@ -267,14 +267,7 @@ class Configuration:
     @staticmethod
     def newConfig(configInit, vehicule, newPosition):
         """ crée une nouvelle config à partir d'un véhicule et d'une nouvelle position, retourne la nouvelle config"""
-
-
-
         # TODO ---> à modifier en deepcopy par la suite
-
-
-
-
         newConfig = copy(configInit)
         newVehicule = copy(vehicule)
         newVehicule.setMarqueur(newPosition)

@@ -82,8 +82,6 @@ class Window (QMainWindow):
         predConfigAction = QAction(QIcon(PRED_CONFIG_ICON), PRED_CONFIG_TIP, self)
         predConfigAction.triggered.connect(self.controller.displayPredConfig)
 
-
-        
         self.addToolBar(self.toolbar);
         self.toolbar.addAction(addFileAction)
         self.toolbar.addAction(resolveAction)
@@ -114,8 +112,7 @@ class Window (QMainWindow):
         if file_dialog.exec_() :
             print(file_dialog.selectedFiles())
             self.controller.setConfiguration(file_dialog.selectedFiles()[0])
-    
-    
+
 
 
 

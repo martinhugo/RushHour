@@ -47,5 +47,5 @@ Temporary Items
 .apdisk
 *.pyc
 
-bin\__pycache__\
+bin\__pycache__
 

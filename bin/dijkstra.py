@@ -89,16 +89,14 @@ class Dijkstra:
 		return poidsMin, noeudCheminMin
 
 
-def main():
-# if __name__ == "__main__":
+
+if __name__ == "__main__":
 
 	conf = Configuration.readFile("../puzzles/avancé/jam30.txt")
 	dijkstra = Dijkstra(conf, 35, flag = "RHM")
 	print(dijkstra.getSolution())
 	# dijkstra.launchDijkstra(conf, 35, flag = "RHM")
 	# print("nombre de configurations atteignables en 15 pas -->", Graphe.countConfig(conf, 15))
-
-main()
 
 
 

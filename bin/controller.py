@@ -65,15 +65,15 @@ class ConfigController:
     def solve(self):
         """ Résoud la configuration selon le type de résolution demandée """
         if self.resolutionType == ResolutionType.LINEAR_PROGRAMMING:
-            print(self.nbMoveMax)
             solver = LPSolver(self.configuration, self.nbMoveMax)
-            self.nextConfigs = solver.solve()
         else:
-            solver = Dijkstra()
-            self.nextConfigs = solver.launchDijkstra(self.configuration, self.nbMoveMax)
+            solver = Dijkstra(self.configuration, self.nbMoveMax)
 
+        self.nextConfigs = solver.solve()
         print(len(self.nextConfigs))
     
+
+
     def displayNextConfig(self):
         """ Demande l'affichage par l'application de la configuration suivante """
         print(len(self.nextConfigs), self.nextConfigs)

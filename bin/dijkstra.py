@@ -39,8 +39,9 @@ class Dijkstra:
 
 			configPoidsMin = noeudCheminMin # on récupère le chemin le plus court et on itère
 
-		print("\nlongueur minimale trouvée : ", configPoidsMin.getLongueurChemin(), "\n")
 		[print(configPoidsMin.getHistorique()[i][0]) for i in range(len(configPoidsMin.getHistorique()))]
+		print("\nlongueur minimale trouvée : ", configPoidsMin.getLongueurChemin(), "\n")
+
 		stop_time = time.time()
 		print("temps total ---->", stop_time - start_time, " sec")
 		
@@ -59,9 +60,9 @@ def main():
 # if __name__ == "__main__":
 
 	dijkstra = Dijkstra()
-	conf = Configuration.readFile("../puzzles/débutant/jam1.txt")
+	conf = Configuration.readFile("../puzzles/débutant/jam9.txt")
 	noeud = Noeud(conf)
-	dijkstra.launchDijkstra(conf, 8, flag = "RHC")
+	dijkstra.launchDijkstra(conf, 8, flag = "RHM")
 
 main()
 

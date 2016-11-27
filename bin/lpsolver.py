@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 
 from configuration import *
-from gurobipy import *
+from configuration import *
+# from gurobipy import *
 
 
 class LPSolver :
@@ -23,6 +24,7 @@ class LPSolver :
         self.createObjective()
         self.createConstraints()
         self.solve("YENAMARRE")
+        self.varToConfig("YENAMARRE")
         #self.model.optimize()
 
 
@@ -48,6 +50,30 @@ class LPSolver :
 
         with open(path, "w") as file:
             file.write(content)
+
+
+    def varToConfig(self, path):
+        """ à partir d'un fichier, transforme une suite d'instructions de la forme : 
+            voiture t passe de la position i à la position j en un tableau de configurations correspondantes
+        """
+
+        with open(path, "r") as file:
+            content = file.read()
+        content = [word for line in content.split("\n") for word in line.split(",") if len(word)>0]
+
+        config = self.config
+        listOfConfig = [config]
+
+        for i in range(0, len(content), 3):
+
+            indexes = [config.getVehicules()[j].getIdVehicule() for j in range(0, len(config.getVehicules()))]
+            indice = indexes.index(content[i]) # indice correspondant à la voiture concernée
+
+            config = Configuration.newConfig(config, config.getVehicules()[indice], int(content[i+2]))
+            listOfConfig.append(config)
+
+        return listOfConfig
+
 
 
 
@@ -300,6 +326,8 @@ class LPSolver :
             self.model.addConstr(self.x[idVehicule][vehicule.getMarqueur()][0], GRB.EQUAL, 1)
             for pos in self.positionsVehicules[idVehicule][vehicule.getMarqueur()]: #une contrainte les met à 1 automatiquement, pas nécessaire.
                 self.model.addConstr(self.z[idVehicule][pos][0], GRB.EQUAL, 1)
+
+
                             
 def main(): 
 # if __name__ == "__main__":

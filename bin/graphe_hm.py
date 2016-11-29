@@ -48,7 +48,7 @@ class Noeud:
 
 	def __eq__(self, noeud2):
 		""" cette fonction retourne vrai si les 2 noeuds donnés en paramètres ont la meme config"""
-		return self.getId() == noeud2.getId()
+		return self.getId() == noeud2.getId() if noeud2 != None else None
 
 
 

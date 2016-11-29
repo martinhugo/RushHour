@@ -41,7 +41,7 @@ class Dijkstra:
 		self.graphe.addNoeud(configPoidsMin) # ajout du noeud dans le graphe
 		self.B.append(configPoidsMin) # ajout du premier noeud dans B (tant que pas dans la boucle, pas définitif)
 
-
+		print(time.time() - start_time)
 		while(not configPoidsMin == None and not Configuration.verifCondition(configPoidsMin.getConfig()) and self.getNbMax() > (len(configPoidsMin.getHistorique())-1)):
 
 			self.B.remove(configPoidsMin) # on retire le noeud définitif de B
@@ -90,7 +90,7 @@ class Dijkstra:
 
 if __name__ == "__main__":
 
-	conf = Configuration.readFile("../puzzles/débutant/jam2.txt")
+	conf = Configuration.readFile("../puzzles/débutant/jam1.txt")
 	dijkstra = Dijkstra(conf, 35, flag = "RHM")
 	print(len(dijkstra.getSolution()))
 	# dijkstra.launchDijkstra(conf, 35, flag = "RHM")

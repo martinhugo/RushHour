@@ -169,11 +169,10 @@ class TimerBar(QProgressBar):
             super().setValue(0)
             self.parent().parent().controller.endSolving()
 
-# if __name__ == "__main__":
-def main():
+if __name__ == "__main__":
+
     app = QApplication(sys.argv);
     rushhour = Window();
     sys.exit(app.exec_());
 
-main()
 

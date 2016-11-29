@@ -7,7 +7,7 @@
 """
 import random
 import copy
-from threading import Thread
+from PyQt5.QtCore import QThread
 
 
 from configuration import *
@@ -65,17 +65,25 @@ class ConfigController:
 
     def solve(self):
         """ Résoud la configuration selon le type de résolution demandée """
+
         if self.resolutionType == ResolutionType.LINEAR_PROGRAMMING:
-            solver = LPSolver(self.configuration, self.nbMoveMax)
+            self.solver = Solver(LPSolver(self.configuration, self.nbMoveMax))
         else:
-            solver = Dijkstra(self.configuration, self.nbMoveMax)
+            self.solver = Solver(Dijkstra(self.configuration, self.nbMoveMax))
 
-        # Threader juste cette instruction, recuperer le résultat ou arrêter au bout de 120s.
+        # self.connect(self.get_thread, SIGNAL("finished()"), self.done)  -> à ajuster au code après
+        self.solver.start()
+        
+        self.mainWindow.startTimer()
 
-        #self.nextConfigs = solver.solve()
+    def endSolving(self):
+        """ Termine la résolution selon les instructions de la fenetre principale """
+        self.solver.terminate
+        self.nextConfigs = self.solver.configs
+        if (len(self.nextConfigs) == 0):
+            self.mainWindow.statusBar().showMessage("Resolution Failed - Time out")
+        
 
-        self.mainWindow.showProgressDialog()
-        print(len(self.nextConfigs))
     
 
 
@@ -97,14 +105,18 @@ class ConfigController:
         
 
 
-def Solver(Thread):
+class Solver(QThread):
 
     def __init__(self, solver):
+        QThread.__init__(self)
         self.solver = solver
         self.configs = []
 
     def run(self):
+        print("début de la recherche de la solution")
         self.configs = self.solver.solve()
+        print("fin de la recherche de la solution")
+        self.terminate
 
 
     

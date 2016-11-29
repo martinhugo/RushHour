@@ -11,6 +11,8 @@ import os
 
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QAction, QDialog, QFileDialog, QToolBar, QWidget, QProgressBar)
 from PyQt5.QtGui import QIcon
+from PyQt5.QtCore import QTimer
+
 from controller import *
 from dialogs import *
 from displayer import *
@@ -45,6 +47,9 @@ class Window (QMainWindow):
         super().__init__()
         self.controller = ConfigController(self)
         self.initScreen()
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.timerEvent)
+
 
     def initScreen(self):
         """ This method sets up the screen of the application.
@@ -54,8 +59,14 @@ class Window (QMainWindow):
             Return: None
         """
         self.createToolBar()
+        
         self.setWindowTitle(WINDOW_TITLE)
+        
         self.statusBar().showMessage("Please, choose your configuration.")
+        
+        self.progressBar = TimerBar()
+        self.statusBar().addPermanentWidget(self.progressBar)
+
         self.show()
 
     def createToolBar(self):
@@ -100,23 +111,23 @@ class Window (QMainWindow):
         settingsDialog = SettingsDialog(self)
         settingsDialog.exec_()
 
-    def showProgressDialog(self):
-        """ Opens a settings dialog.
-            Params: none
-            Return: none
+    def startTimer(self):
+        """ Demarre le timer de résolution et affiche sa progression dans la timer bar
         """
-        print("COUCOU")
-        progressBar = QProgressBar()
-        progressBar.maximum = 120
-        self.statusBar().addPermanentWidget(progressBar)
-        print("CAVA?")
+        self.timer.start(1000)
+
+    def stopTimer(self):
+        """ Arrete le timer de résolution et demande au controller d'arreter le thread de résolution """
+        self.timer.stop()
+        self.controller.endSolving()
+
+    def timerEvent(self):
+        """ Met a jour la valeur de la progress bar lors de la reception d'un signal du timer """
+        self.progressBar.setValue(self.progressBar.value()+1)
+
+
         
-        i=0
-        while i != 120:
-            print(i)
-            time.sleep(1)
-            progressBar.value = i
-            i+=1
+        
 
 
     def fileSelectDialog(self):
@@ -134,8 +145,35 @@ class Window (QMainWindow):
         self.statusBar().showMessage("Ready")
 
 
-if __name__ == "__main__":
+
+class TimerBar(QProgressBar):
+    """ Défini une barre de progression """
+
+    def __init__(self, parent=None):
+        super().__init__()
+        self.setMaximum(120)
+
+    def setValue(self, value):
+        super().setValue(value)
+        print(value)
+
+        # à arranger
+        if(not self.parent().parent().controller.solver.isRunning()):
+            print("solution trouvée !!")
+            self.parent().parent().stopTimer()
+            super().setValue(0)
+
+        elif self.value() == self.maximum():
+            print("fin")
+            self.parent().parent().stopTimer()
+            super().setValue(0)
+            self.parent().parent().controller.endSolving()
+
+# if __name__ == "__main__":
+def main():
     app = QApplication(sys.argv);
     rushhour = Window();
     sys.exit(app.exec_());
+
+main()
 

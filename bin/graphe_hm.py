@@ -86,7 +86,6 @@ class Graphe:
 
 	def constructNoeuds(self, noeud, nonDefinitveEdges, flag = "RHM"):
 		""" construit des noeuds en fonction d'un dictionnaire passé en paramètre"""
-		start_time = time.time()
 		movements = noeud.getConfig().getPossibleMovements()
 		poids = 1
 		# pour chaque véhicule, pour chaque position possible du véhicule

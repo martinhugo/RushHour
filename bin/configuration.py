@@ -147,6 +147,68 @@ class Configuration:
 #                                                       POUR POSITIONS POSSIBLES                                                         #
 #                                                                                                                                        #
 ##########################################################################################################################################
+    def getPossibleMovements(self):
+        """ Retourne l'ensemble des déplacements possibles de tous les véhicules sous la forme d'un dictionnaire
+            {vehicle: list} ou la liste est la liste de ces positions possibles.
+        """
+        movement = {}
+        for vehicle in self.getVehicules():
+            vehicleMovement = self.getPossibleMovementsForAVehicle(vehicle)
+            if len(vehicleMovement) > 0:
+                movement[vehicle] = vehicleMovement
+
+        return movement
+
+    def getPossibleMovementsForAVehicle(self, vehicle):
+        """ Retourne les mouvements possibles du véhicule vehicle passé en paramètre.
+            Ces mouvements sont retournés en essaynt de le déplacer en avant/arrière dans la configuration tant que c'est possible.
+            params: vehicle -> le vehicule dont on cherche les deplacements
+        """ 
+        movements = []
+
+        orientation, size, marqueur = vehicle.getOrientation(), vehicle.getTypeVehicule(), vehicle.getMarqueur()
+        minPos = marqueur%6 if orientation == Orientation.BAS else marqueur//6 * Orientation.BAS # plus petite position du véhicule
+        maxPos = minPos + orientation*5  # plus grande position du véhicule
+
+        # Recherche de mouvements en avant
+        stopped = False 
+        position = marqueur
+        while not stopped:
+            position += orientation
+            tailPos = position + (size-1)*orientation
+            
+            # Si le marqueur ne dépasse pas, on vérifie les positions du véhicules
+            if tailPos <= maxPos:
+                for pos in range(position,  position + size*orientation, orientation):
+                    if(self.configuration[pos] !=0 and self.configuration[pos] != vehicle):
+                        stopped = True
+            else:
+                stopped = True
+
+            # Si la position est valide on l'ajoute et on continue de se déplacer en avant
+            if not stopped:
+                movements.append(position)
+
+
+        # Recherche de mouvements en arrière
+        stopped = False 
+        position = marqueur
+        while not stopped:
+            position -= orientation
+
+            # Si le marqueur ne dépasse pas, on vérifie les positions du véhicules
+            if position >= minPos:
+                for pos in range(position, position+size*orientation, orientation):
+                    if(self.configuration[pos] !=0 and self.configuration[pos] != vehicle):
+                        stopped = True
+            else:
+                stopped = True
+
+            # Si la position est valide on l'ajoute et on continue de se déplacer en arrière
+            if not stopped:
+                movements.append(position)
+
+        return movements
 
     def allPossiblePositionsForAVehicle(self, vehicle):
         """ retourne la liste, pour un véhicule, de toutes les cases que ce véhicule peut occuper, sans tenir compte des autres véhicules"""
@@ -308,12 +370,20 @@ class Configuration:
 
 
 if __name__ == "__main__":
-    conf = Configuration.readFile("../puzzles/avancé/jam30.txt")
+    conf = Configuration.readFile("../puzzles/intermédiaire/jam12.txt")
     print(conf)
+
+
+    start_time = time.time()
+    print(conf.getPossibleMovements())
+    stop_time = time.time()
+    print("Temps: {}".format(round(stop_time - start_time, 4)), start_time, stop_time)
+
+
     start_time = time.time()
     print(conf.getPossiblePosition())
     stop_time = time.time()
-    print((stop_time - start_time))
+    print("Temps: {}".format(stop_time - start_time), start_time, stop_time)
     
 
 

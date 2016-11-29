@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import math
+import time
 from configuration import *
 
 
@@ -45,12 +46,16 @@ class Noeud:
 		""" modifie l'historique du noeud"""
 		self.historique = historique
 
+	def __eq__(self, noeud2):
+		""" cette fonction retourne vrai si les 2 noeuds donnés en paramètres ont la meme config"""
+		return self.getId() == noeud2.getId()
+
+
 
 	@staticmethod
 	def compare2Noeuds(noeud1, noeud2):
 		""" cette fonction retourne vrai si les 2 noeuds donnés en paramètres ont la meme config"""
 		return noeud1.getId() == noeud2.getId()
-
 
 
 
@@ -79,49 +84,52 @@ class Graphe:
 		self.noeuds.append(noeud)
 			
 
-	def constructNoeuds(self, noeud, B, flag = "RHM"):
+	def constructNoeuds(self, noeud, nonDefinitveEdges, flag = "RHM"):
 		""" construit des noeuds en fonction d'un dictionnaire passé en paramètre"""
-
-		dico = noeud.getConfig().getPossibleMovements()
+		start_time = time.time()
+		movements = noeud.getConfig().getPossibleMovements()
 		poids = 1
-
 		# pour chaque véhicule, pour chaque position possible du véhicule
-		for objet in dico.keys():
+		for vehicle in movements.keys():
 
 			listVehicules = noeud.getConfig().getVehicules()
-			marqueurObjet = listVehicules[listVehicules.index(objet)].getMarqueur()
-			orientationObjet = listVehicules[listVehicules.index(objet)].getOrientation()
+			marqueurVehicle = listVehicules[listVehicules.index(vehicle)].getMarqueur()
+			orientationVehicle = listVehicules[listVehicules.index(vehicle)].getOrientation()
 
-			for marqueur in dico[objet]:
+			for marqueur in movements[vehicle]:
 
 				if(flag != "RHM"):
-					poids = abs(marqueurObjet - marqueur)/orientationObjet
+					poids = abs(marqueurVehicle - marqueur)/orientationVehicle
 
-				n = self.verifNoeudInGraphe(Noeud(Configuration.newConfig(noeud.getConfig(), objet, marqueur)))
+				currentEdge = self.verifNoeudInGraphe(Noeud(Configuration.newConfig(noeud.getConfig(), vehicle, marqueur)))
 
-				if(len(n.getHistorique()) == 0): # si le noeud n'a jamais été crée
-					self.constructNoeud(noeud, n, B, poids)
+				if(len(currentEdge.getHistorique()) == 0): # si le noeud n'a jamais été crée
+					self.constructNoeud(noeud, currentEdge, nonDefinitveEdges, poids)
 
-				elif(n.getLongueurChemin() > noeud.getLongueurChemin() + poids): # si noeud déjà créé et chemin plus petit possible
-					n.setLongueurChemin(noeud.getLongueurChemin() + poids)
+				elif(currentEdge.getLongueurChemin() > noeud.getLongueurChemin() + poids): # si noeud déjà créé et chemin plus petit possible
+					currentEdge.setLongueurChemin(noeud.getLongueurChemin() + poids)
 				
 
 
-	def constructNoeud(self, noeudDefinitif, noeudToAdd, B, poids):
+	def constructNoeud(self, noeudDefinitif, noeudToAdd, nonDefinitveEdges, poids):
 		""" ajoute le noeud et l'arête correspondant dans le graphe si le noeud et l'arete ne sont pas déjà dans le graphe"""
 		noeudToAdd.setHistorique(noeudDefinitif.getHistorique() + [[noeudToAdd.getConfig(), noeudDefinitif.getLongueurChemin() + poids]])
 		self.addNoeud(noeudToAdd)
-		B.append(noeudToAdd)
+		nonDefinitveEdges.append(noeudToAdd)
 
 
 	def verifNoeudInGraphe(self, noeud):
-		""" retourne vrai si le noeud est dans le graphe"""# revoir commentaire
+		""" Retourne une référence sur un noeud existant si ce noeud existe déja dans le graphe, 
+			renvoi la nouvelle référence sinon. 
+		"""
 		for n in self.getNoeuds():
 			if(Noeud.compare2Noeuds(n, noeud)):
 				return n
 		return noeud
 
 
+
+	### METHODE INUTILE ??
 	@staticmethod
 	def countConfig(conf, i):
 		""" compte le nombre de configuration atteignables en i pas depuis conf"""

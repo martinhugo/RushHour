@@ -6,16 +6,18 @@ import time
 from configuration import *
 from graphe import *
 
-class Dijkstra:
-   """ Cette classe permet la résolution d'une grille de RushHour par l'algorithme de Dijkstra"""
 
+
+class Dijkstra:
+    """ Cette classe permet la résolution d'une grille de RushHour par l'algorithme de Dijkstra"""
+    
     def __init__(self, config, nbMax, flag = "RHM"):
-    	""" 
-    	Params : 
-    		config -> la configuration initiale
-    		nbMax -> le nombre maximum de déplacements autorisés
-    		flag (facultatif) -> objectif de résolution, par défaut sur RHM
-    	"""
+        """ 
+        Params : 
+            config -> la configuration initiale
+            nbMax -> le nombre maximum de déplacements autorisés
+            flag (facultatif) -> objectif de résolution, par défaut sur RHM
+        """
         self.graphe = Graphe()
         self.config = config
         self.nbMax = nbMax
@@ -34,7 +36,7 @@ class Dijkstra:
 
     def solve(self, flag = "RHM"):
         """
-        	Cette méthode permet la résolution de la grille de RushHour par Dijkstra
+            Cette méthode permet la résolution de la grille de RushHour par Dijkstra
             La résolution peut être faite selon RHM ou RHC selon la valeur du flag.
             Params : flag(facultatif) -> objectif de résolution, par défaut sur RHM
             Return : liste des configurations permettant de résoudre la grille de RushHour
@@ -70,8 +72,8 @@ class Dijkstra:
 
             listConfig = [noeudsPoidsMin.getConfig()]
             while(noeudsPoidsMin.getParent() != None):
-            	noeudsPoidsMin = noeudsPoidsMin.getParent()
-            	listConfig.append(noeudsPoidsMin.getConfig())
+                noeudsPoidsMin = noeudsPoidsMin.getParent()
+                listConfig.append(noeudsPoidsMin.getConfig())
 
             listConfig.reverse()
             return listConfig
@@ -80,12 +82,11 @@ class Dijkstra:
         else:
             return []
 
+
+
 if __name__ == "__main__":
-    conf = Configuration.readFile("../puzzles/avancé/jam26.txt")
+    conf = Configuration.readFile("../puzzles/débutant/jam1.txt")
     dijkstra = Dijkstra(conf, 52, flag = "RHM")
     print(len(dijkstra.getSolution()))
     # dijkstra.launchDijkstra(conf, 35, flag = "RHM")
     # print("nombre de configurations atteignables en 1 pas -->", Graphe.countConfig(conf, 1))
-
-
-

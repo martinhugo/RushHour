@@ -90,8 +90,8 @@ class Configuration:
     @staticmethod
     def constructVehicules(content):
         """ Construit le dictionnaire contenant l'ensemble des voitures de la grille
-        	Params : content : une chaine de caractère fournie par readFile
-        	Return : le dictionnaire contenant l'ensemble des véhicules
+            Params : content : une chaine de caractère fournie par readFile
+            Return : le dictionnaire contenant l'ensemble des véhicules
         """
 
         voitures, camions  = {}, {}
@@ -135,9 +135,7 @@ class Configuration:
             self.positionsVehicules[vehicule.getIdVehicule()] = [k for k in range(marqueur, marqueur + orientation * vehicule.getTypeVehicule(), orientation)]
 
 
-
-
-	def getPossibleMovements(self):
+    def getPossibleMovements(self):
         """ Retourne l'ensemble des déplacements possibles de tous les véhicules sous la forme d'un dictionnaire
             {vehicle: list} ou la liste est la liste de ces positions possibles.
         """
@@ -206,7 +204,7 @@ class Configuration:
 
 
 
-	@staticmethod
+    @staticmethod
     def verifCondition(config):
         """ si le noeud sélectionné permet de conclure qu'on a fini, ie voiture "g" en position 16"""
         vehicules = config.getVehicules()

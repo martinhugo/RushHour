@@ -89,17 +89,10 @@ class Configuration:
 
     @staticmethod
     def constructVehicules(content):
-        # Idée:
-        # Crée une liste de 36 mots. Parcourir uniquement cette liste et deux dictionnaires vides voitures camions.
-        #
-        # Si on rencontre un mot de taille > 2, on vérifie son type et on l'ajoute à l'un des deux dictionnaires voitures camions à son indice numérotés
-        # Si il est ajouté pour la première fois on ajoute son indice en tant que marqueur
-        # Si il est rencontré pour une seconde fois on verifie si les deux marqueurs sont multiples de 6, si oui son orientation est bas sinon droite
-        # on construit la liste finale en fusionnant les deux dictionnaires dans une liste et en faisant abstraction des clés.
-        # Deux parcours, un pour creer le tableau, l'autre pour creer les dictionnaires. Peut être réduit en un parcourt, sera fait ultérieurement. (pour l'instant plus clair dans ma tête en un parcourt)
-        #
-        # Si on rencontre la lettre 'g', on créé une voiture selon la même méthode.
-        # Première version: Peut comporter bugs et incohérences.
+        """ Construit le dictionnaire contenant l'ensemble des voitures de la grille
+        	Params : content : une chaine de caractère fournie par readFile
+        	Return : le dictionnaire contenant l'ensemble des véhicules
+        """
 
         voitures, camions  = {}, {}
 
@@ -142,12 +135,9 @@ class Configuration:
             self.positionsVehicules[vehicule.getIdVehicule()] = [k for k in range(marqueur, marqueur + orientation * vehicule.getTypeVehicule(), orientation)]
 
 
-##########################################################################################################################################
-#                                                                                                                                        #
-#                                                       POUR POSITIONS POSSIBLES                                                         #
-#                                                                                                                                        #
-##########################################################################################################################################
-    def getPossibleMovements(self):
+
+
+	def getPossibleMovements(self):
         """ Retourne l'ensemble des déplacements possibles de tous les véhicules sous la forme d'un dictionnaire
             {vehicle: list} ou la liste est la liste de ces positions possibles.
         """
@@ -158,6 +148,9 @@ class Configuration:
                 movement[vehicle] = vehicleMovement
 
         return movement
+
+
+
 
     def getPossibleMovementsForAVehicle(self, vehicle):
         """ Retourne les mouvements possibles du véhicule vehicle passé en paramètre.
@@ -210,107 +203,10 @@ class Configuration:
 
         return movements
 
-    def allPossiblePositionsForAVehicle(self, vehicle):
-        """ retourne la liste, pour un véhicule, de toutes les cases que ce véhicule peut occuper, sans tenir compte des autres véhicules"""
 
 
-        marqueur = vehicle.getMarqueur()
-        orientation = vehicle.getOrientation()
 
-        debut = 0
-        if(orientation == 6):
-            debut = marqueur%6
-        else:
-            debut = marqueur-marqueur%6
-        fin = debut + orientation*(6 - vehicle.getTypeVehicule())
-
-        return [i for i in range(debut, fin+1, orientation)]
-
-    def allPossiblePositionsForAllVehicles(self):
-        """ retourne un dictionnaire associant à un véhicule la liste de toutes les cases que ce véhicule peut occuper, sans tenir compte des autres véhicules"""
-
-
-        vehicles = self.getVehicules()
-        possibleMoves = {}
-        for vehicle in vehicles:
-            possibleMoves[vehicle.getIdVehicule()] = self.allPossiblePositionsForAVehicle(vehicle)
-        return possibleMoves
-
-
-    def possiblePositionForAVehicle(self, vehicle):
-        """ Retourne la liste de toutes les positions effectivement possibles d'un véhicule """
-
-        listPositionVehicle = self.removeCaseCommun(vehicle, self.allPossiblePositionsForAVehicle(vehicle))
-        listPositionVehicle.remove(vehicle.getMarqueur()) # enlever position occupée par curseur
-        listPositionVehicle = self.removeCaseSaut(vehicle, listPositionVehicle)
-
-        return listPositionVehicle
-
-
-    def removeCaseCommun(self, vehicle, listPositionVehicle):
-        """ retire toutes les cases en commun entre un véhicule et tous les autres, retourne la liste des mouvements possibles sans ces cases"""
-
-        orientation = vehicle.getOrientation()
-        length = vehicle.getTypeVehicule()
-
-        listPositionOtherVehicles = self.unionCasesOtherVehicles(vehicle) 
-        
-        for value in range(length): # pour chaque case occupée par le vehicule
-            listPositionVehicle = ListTools.difference(listPositionVehicle, ListTools.addToList(listPositionOtherVehicles, - value * orientation))
-        return listPositionVehicle
-
-
-    def unionCasesOtherVehicles(self, vehicle):
-        """ retourne la liste de toutes les cases occupées par les véhicules autres que le véhicule passé en paramètre """
-
-        listPositionOtherVehicles = []
-        for otherVehicle in self.getVehicules(): # pour tous les autres véhicules
-            if otherVehicle != vehicle:
-                # liste de toutes les cases occupées par tous les autres véhicules
-                listPositionOtherVehicles = ListTools.union(listPositionOtherVehicles, self.getPositionsVehicles()[otherVehicle.getIdVehicule()])
-        return listPositionOtherVehicles
-
-
-    def removeCaseSaut(self, vehicle, listPositionVehicle):
-        """ retire toutes les cases qui nécessitent de sauter par dessus un véhicule """
-
-        marqueur = vehicle.getMarqueur()
-        orientation = vehicle.getOrientation()
-
-        listToRemove = []
-        listPositionOtherVehicles = self.unionCasesOtherVehicles(vehicle) 
-
-        for element in listPositionVehicle:
-            for value in listPositionOtherVehicles:
-                if( (orientation == 1 and element//6 == value //6) or (orientation == 6 and element%6 == value%6) ): # si les cases sont alignées
-                    if( (marqueur > value > element) or (marqueur < value < element) ): # si la case a nécessité un saut par dessus un véhicule
-                        listToRemove.append(element)
-
-        listPositionVehicle = ListTools.difference(listPositionVehicle, listToRemove)
-
-        return listPositionVehicle
-
-
-    def possiblePositionForAllVehicle(self):
-        """ retourne un dictionnaire associant la liste de tous les déplacements effectivement possibles pour un véhicule"""
-
-        dicoPositions = {}
-        for vehicle in self.getVehicules():
-            positionsPossibles = self.possiblePositionForAVehicle(vehicle)
-            if positionsPossibles != []:
-                dicoPositions[vehicle] = positionsPossibles
-        return dicoPositions
-
-
-    def getPossiblePosition(self):
-        """ retourne l'ensemble des positions possibles pour tous les véhicules"""
-        self.initPositionsVehicules()
-        return self.possiblePositionForAllVehicle()
-
-##########################################################################################################################################
-##########################################################################################################################################
-##########################################################################################################################################
-    @staticmethod
+	@staticmethod
     def verifCondition(config):
         """ si le noeud sélectionné permet de conclure qu'on a fini, ie voiture "g" en position 16"""
         vehicules = config.getVehicules()
@@ -319,6 +215,8 @@ class Configuration:
                 if(vehicule.getMarqueur() == 16):
                     return True
         return False
+
+
 
 
     @staticmethod
@@ -366,9 +264,6 @@ class Configuration:
 
 
 
-
-
-
 if __name__ == "__main__":
     conf = Configuration.readFile("../puzzles/intermédiaire/jam12.txt")
     print(conf)
@@ -378,17 +273,3 @@ if __name__ == "__main__":
     print(conf.getPossibleMovements())
     stop_time = time.time()
     print("Temps: {}".format(round(stop_time - start_time, 4)), start_time, stop_time)
-
-
-    start_time = time.time()
-    print(conf.getPossiblePosition())
-    stop_time = time.time()
-    print("Temps: {}".format(stop_time - start_time), start_time, stop_time)
-    
-
-
-
-
-
-
-

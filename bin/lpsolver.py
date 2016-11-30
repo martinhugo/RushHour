@@ -6,13 +6,15 @@ from gurobipy import *
 
 
 class LPSolver :
-    """ Va définir les variables de contrainte nécessaires pour la résolution par PL. 
-        Positions2Points : p[j][l] : ensemble des positions comprises entre j et l. -> TODO
-        
-    """
+	""" Cette classe permet la résolution d'une grille de RushHour par programmation linéaire. """
 
     def __init__(self, config, nbCoupMax):
-        self.config = config
+    	""" 
+    		params : config -> configuration initiale de la grille
+    				 nbCoupMax -> nombre de coups max autorisés pour résoudre la grille
+    	"""
+        
+        self.config = config 
         self.nbMove = nbCoupMax
         self.model = Model()
 
@@ -28,18 +30,24 @@ class LPSolver :
 
     def solve(self):
         """ Demande la résolution du modèle et écrit l'ensemble des variables valeurs de y[i][j][k][l] dans le fichier de chemin path """
+        
         self.model.optimize()
         return self.createConfigurations()
 
     def createConfigurations(self):
-        """ Retourne la liste contenant ensemble des configurations de la configuration initiale à finale proposant une résolution optimale du jeu """
+    	""" cette fonction créé l'ensemble des configurations, de la configuration initiale à la configuration finale
+    		Params : None
+    		Return : la liste des configurations de la configuration initiale à la configuration finale 
+    		qui propose une solution optimale du problème
+        """ 
+
         config = self.config
         listOfConfig = [config]
 
-        for k in self.moves:
-            for idVehicule in self.idVehiculesList:
-                for j in self.possiblesMarqueurs[idVehicule]:
-                    for l in self.possiblesMarqueurs[idVehicule]:
+        for k in self.moves: # pour chaque mouvement k
+            for idVehicule in self.idVehiculesList: # pour chaque véhicule idVehicule
+                for j in self.possiblesMarqueurs[idVehicule]: # pour chaque marqueur possible j de idVehicule
+                    for l in self.possiblesMarqueurs[idVehicule]: # pour chaque marqueur possible l différent de j
                         if j != l:
                             if self.y[idVehicule, j, l, k].X == 1:
                                 ids = [config.getVehicules()[n].getIdVehicule() for n in range(0, len(config.getVehicules()))]
@@ -57,7 +65,11 @@ class LPSolver :
 
 
     def initArrays(self):
-        """ Initialise l'ensembles des tableaux et matrices nécessaires à l'établissement des variables, contraintes et de la fonction objectif """
+        """ Initialise l'ensemble des tableaux et matrices nécessaires à l'établissement des variables, 
+        contraintes et de la fonction objectif 
+        	Params : None
+        	Return : None
+        """
         self.initIdVehiculesList()
         self.initPossiblesPositions() # créé x, y, z et les initialise selon la configuration passée en param
         self.initLongueurs() # correspond à v
@@ -69,21 +81,29 @@ class LPSolver :
     def createDecisionsVariables(self):
         """ Créé l'ensemble des variables de décisions nécessaires à la résolution du problème.
             Les variables sont contenues dans des dictionnaires x, y, et z conformément aux notations de l'énoncé.
+       		Params : None
+       		Return : None
         """
         self.x, self.y, self.z = {}, {}, {}
 
-        for vehicule in self.config.getVehicules():
+        for vehicule in self.config.getVehicules(): # pour chaque véhicule
             idVehicule = vehicule.getIdVehicule()
 
-            for k in self.moves:
-                for j in self.possiblesMarqueurs[idVehicule]:
+            for k in self.moves: # pour chaque étape k 
+                for j in self.possiblesMarqueurs[idVehicule]: # pour chaque marqueur possible j du véhicule
+
+                    # variable de décision indiquant si le véhicule est en position j au terme de la k-eme étape
                     self.x[idVehicule, j, k] = self.model.addVar(0, 1, vtype=GRB.BINARY)
 
-                    for l in self.possiblesMarqueurs[idVehicule]:
+                    for l in self.possiblesMarqueurs[idVehicule]: # pour chaque marqueur différent de j
                         if j!=l:
+
+                        	# variable de décision indiquant si le véhicule est passé de la position j à la position l au terme de la k-eme étape
                             self.y[idVehicule, j, l, k] = self.model.addVar(0, 1, vtype=GRB.BINARY)
 
                 for j in self.possiblesPositions[idVehicule]:
+
+                	# variable de décision indiquant si le véhicule occupe la position j au terme de la k-eme étape
                     self.z[idVehicule, j, k] = self.model.addVar(0, 1, vtype=GRB.BINARY)
         
         self.model.update()
@@ -91,29 +111,38 @@ class LPSolver :
     def createObjective(self, objectiveType="RHM"):
         """ Défini l'objectif du modèle en fonction du type d'objectif passé en paramètre.
             L'objectif est soit de type "RHM", minimisant le nombre de mouvement, soit de type "RHC", minimisant le nombre de case parcourue.
+        	Params : objectiveType (facultatif) -> le type de l'objectif, étant par défaut sur RHM
+        	Return : None
         """
+
         objective = LinExpr()
         
-        # A OPTIMISER, Développer rapidement parceque flemme et envie de jouer (présaison open omg too op ggwp rito)
-        for idVehicule in self.idVehiculesList:
-            for k in self.moves:
-                for j in self.possiblesMarqueurs[idVehicule]:
-                    for l in self.possiblesMarqueurs[idVehicule]:
+        for idVehicule in self.idVehiculesList: # pour chaque véhicule
+            for k in self.moves: # pour chaque étape k
+                for j in self.possiblesMarqueurs[idVehicule]: # pour chaque marqueur possible j du véhicule 
+                    for l in self.possiblesMarqueurs[idVehicule]: # pour chaque marqueur possible du véhicule différent de j
                         if j != l:
+                        	# si l'objectif est RHM, le poids de chaque mouvement est de 1, sinon, du nombre de cases de déplacement
                             coeff = 1 if objectiveType == "RHM" else len(self.positions2Points[j][l])
                             objective.addTerms(coeff, self.y[idVehicule, j, l, k])
 
+        # pour empêcher à la résolution de trouver que ne pas résoudre le problème est plus optimisé que de le résoudre
         coeff = self.nbMove if objectiveType == "RHM" else 6*self.nbMove
 
+        # minimisation de l'objectif
         self.model.setObjective(coeff*(1-self.x["g", 16, self.nbMove]) + objective, GRB.MINIMIZE)
         self.model.update()
 
 
     def createConstraints(self):
-        """ Créé l'ensemble des contraintes nécéssaire à la résolution de la configuration RushHour """
+        """ Appelle l'ensemble des méthodes permettant la création de l'ensemble des contraintes nécéssaire à la résolution de la configuration RushHour 
+        	Params : None
+        	Return : None
+        """
+
         self.addInitialisationConstraints() # contraintes d'initialisations
-        self.addPositionConstraints() # contraintes de type 1, 2 et 3
-        self.addMovementConstraints() # contraintes de type 4, 5, 6, 7
+        self.addPositionConstraints() # contraintes de type 1, 2 et 3 (de l'énoncé)
+        self.addMovementConstraints() # contraintes de type 4, 5, 6, 7 (de l'énoncé)
         self.model.update()
 
 
@@ -122,76 +151,87 @@ class LPSolver :
 #######################################   Définition des tableaux d'attributs ####################################### 
     
     def initIdVehiculesList(self):
-        """ Créé la liste des ids de véhicules """ 
+        """ Créé la liste des ids de véhicules 
+        	Params : None
+        	Return : None
+        """ 
         self.idVehiculesList = [vehicule.getIdVehicule() for vehicule in self.config.getVehicules()]
 
     def initPossiblesPositions(self):
-        """ Créé une liste des positions possibles que peut prendre chaque véhicule """
+        """ Créé une liste des positions possibles que peut prendre chaque véhicule 
+        	Params : None
+        	Return : None
+        """
         self.possiblesPositions = {}
         self.possiblesMarqueurs = {}
 
-        for vehicule in self.config.getVehicules():
+        for vehicule in self.config.getVehicules(): # pour chaque véhicule
 
-            idVehicule = vehicule.getIdVehicule()
-            orientation = vehicule.getOrientation()
-            typeVehicule = vehicule.getTypeVehicule()
+            idVehicule = vehicule.getIdVehicule() # on stocke son identifiant
+            orientation = vehicule.getOrientation() # on stocke son orientation (1 si horizontal, 6 si vertical)
+            typeVehicule = vehicule.getTypeVehicule() # on stocke son type (camion ou voiture)
 
+            # récupération du début de la ligne ou de la colonne dépendant de l'orientation de la voiture
             start = vehicule.getMarqueur()%6 if orientation == Orientation.BAS else vehicule.getMarqueur()//6 * Orientation.BAS 
 
+            # définition de l'ensemble des positions possibles et de l'ensemble des marqueurs possibles de la voiture
             self.possiblesPositions[idVehicule] = list(range(start, start + 5*orientation + 1, orientation))
             self.possiblesMarqueurs[idVehicule] = list(range(start, start + (5 - (typeVehicule - 1))*orientation + 1, orientation))
 
     def initLongueurs(self):
         """ Défini la longueur de tous les véhicules de config
-
-            Paramètres : 
-                - une configuration des voitures
+            Params : None
+            Return : None
         """
         self.longueurs = {}
         for vehicule in self.config.getVehicules():
             self.longueurs[vehicule.getIdVehicule()] = vehicule.getTypeVehicule()
 
     def getLongueurs(self):
-        """ Renvoie la longueur de tous les véhicules de config"""
+        """ Renvoie la longueur de tous les véhicules de config
+        	Params :None
+        	Return : le dictionnaire associant à chaque véhicule sa taille
+        """
         return self.longueurs
 
 
     def initPositionsVehicules(self):
-        """ Pour chaque véhicule et pour chaque case, défini toutes les cases occupées
-
-            Paramètres : 
-                    - une configuration des voitures
+        """ défini toutes les cases occupées pour chaque véhicule et pour chaque case occupée par ce véhicule
+        	Params : None
+        	Return : None
         """
         self.positionsVehicules = {}
-        for vehicle in self.config.getVehicules():
+        for vehicle in self.config.getVehicules(): # pour chque véhicule
+
             currentList = {}
-            idVehicule = vehicle.getIdVehicule()
-            # pour chaque positions de la grille
+            idVehicule = vehicle.getIdVehicule() # on stocke l'identifiant du véhicule
             
-            for j in self.possiblesMarqueurs[idVehicule]:
+            for j in self.possiblesMarqueurs[idVehicule]: # pour chaque marqueur j possible du véhicule
                 positions = []
-                indexMax = vehicle.getOrientation() * (vehicle.getTypeVehicule() -1)
+                indexMax = vehicle.getOrientation() * (vehicle.getTypeVehicule() -1) # on stocke l'indice maximum de la case occupée par le véhicule
 
                 # si le véhicule ne sort pas de la grille
                 if (j + indexMax < 36):
-                    positions = self.positions2Points[j][j + indexMax]
+                    positions = self.positions2Points[j][j + indexMax] # on stocke l'ensemble des positions occupées par le véhicule en position j
                     
-            
                 currentList[j] = positions
             self.positionsVehicules[vehicle.getIdVehicule()] = currentList
 
     def getPositionsVehicules(self):
-        """ Renvoie la liste de toutes les cases occupées pour un véhicule et une case donnée """
+        """ Renvoie la liste de toutes les cases occupées pour un véhicule et une case donnée 
+        	Params : None
+        	Return : le dictionnaire associant l'ensemble des véhicules à l'ensemble des cases occupées par ce véhicule pour une case donnée"""
         return self.positionsVehicules
 
     def initPositions2Points(self):
         """ Défini la matrice p[][] qui contient pour tout i,j l'ensemble des positions entre ces deux marqueurs.
-            Si les cases ne sont pas alignées verticalement ou horizontalement, le tableau renverra une liste vide pour la case correspondante
+            Params : None
+        	Return : None
         """
         self.positions2Points = []
-        for i in range(36):
+        for i in range(36): # pour chaque position i de la grille
             currentList = []
-            for j in range(36):
+            for j in range(36): # pour chaque position j de la grille
                 positions = []
                 step = 0
                 # si les 2 points sont alignés horizontalement
@@ -215,7 +255,10 @@ class LPSolver :
 
 
     def getPositions2Points(self):
-        """ retourne un tableau [pour toutes les cases j][pour toutes les cases l] qui est l'ensemble des positions comprises entre j et l."""
+        """ retourne un tableau (i, j) qui est l'ensemble des positions comprises entre j et l.
+        	Params : None
+        	Return : un tableau 2D indiquant pour chaque (i, j) l'ensemble des positions entre ces deux points
+        """
         return self.positions2Points
 
 
@@ -225,14 +268,17 @@ class LPSolver :
 
 
     def addPositionConstraints(self):
-        """ Trois types de contraintes sont ajoutées dans cette méthode
+        """ Trois types de contraintes sont ajoutées dans cette méthode : 
                 Un seul véhicule dans chaque case a chaque tour. # 2
                 Seule vi cases sont occupées par le véhicule i dans sa rangée. #3
                 zi,m,k = 1 pour toutes m cases occupées par un véhicule i.
+            Params : None
+            Return : None
 
         """
-        for k in range(1, self.nbMove+1):
-            for idVehicule in self.idVehiculesList:
+        for k in range(1, self.nbMove+1): # pour chaque étape à partir de la première étape
+            for idVehicule in self.idVehiculesList: # pour chaque véhicule
+
                 # pour chaque tour et chaque véhicule, la somme de ces variables z a 1 est égal a la longueur du véhicule.
                 self.model.addConstr(quicksum((self.z[idVehicule, j, k] for j in self.possiblesPositions[idVehicule])), GRB.EQUAL, self.longueurs[idVehicule]) #3
 
@@ -250,25 +296,30 @@ class LPSolver :
                 au plus un véhicule est déplacé par tour (5)
                 le dernier mouvement est celui ou le véhicule "g" est au marqueur 16 (6)
                 lors d'un mouvement, le marqueur du véhicule est bien mis à jour (7)
+            Params : None
+            Return : None
         """
-        for k in range(0, self.nbMove+1):
+
+        for k in range(0, self.nbMove+1): # pour chaque étape k
             # le nombre de véhicule déplacé au tour k
             nbVehiculeMoved = LinExpr()
 
             for idVehicule in self.idVehiculesList:
+
                 # le nombre de position du marqueur du véhicule
                 nbVehiculePosition = LinExpr()
+
                 # Le nombre de mouvement du véhicule
                 nbVehiculeMovement = LinExpr()
                 
-                for j in self.possiblesMarqueurs[idVehicule]:
+                for j in self.possiblesMarqueurs[idVehicule]: # pour chaque marqueur possible
                     nbVehiculePosition.addTerms(1, self.x[idVehicule, j, k])
                     
                     # Ces contraintes ne sont pas valable au tour d'initialisation
                     if k != 0:
                         nbMovementFromJ = LinExpr()
                         nbMovementToJ = LinExpr()
-                        for l in self.possiblesMarqueurs[idVehicule]:
+                        for l in self.possiblesMarqueurs[idVehicule]: # pour chaque marqueur possible différent de j
                             if j != l:
                                     nbVehiculeMovement.addTerms(1, self.y[idVehicule, j, l, k])
                                     nbVehiculeMoved.addTerms(1, self.y[idVehicule, j, l, k])
@@ -301,15 +352,17 @@ class LPSolver :
             if k!=0:
                 self.model.addConstr(nbVehiculeMoved - (1-self.x["g", 16, k-1]), GRB.EQUAL, 0) #(6)
             else:
-                self.model.addConstr(nbVehiculeMoved, GRB.EQUAL, 0) # UTILE? 
+                self.model.addConstr(nbVehiculeMoved, GRB.EQUAL, 0)
 
 
 
     def addInitialisationConstraints(self):
         """ Ajoute les contraintes d'initialisation représentant la configuration courante 
             Les marqueurs et positions des véhicules sont mis a 1 en fonction de la configuration courante.
+            Params : None
+            Return : None
         """
-        for vehicule in self.config.getVehicules():
+        for vehicule in self.config.getVehicules(): # pour chaque véhicule
             idVehicule = vehicule.getIdVehicule()
             self.model.addConstr(self.x[idVehicule, vehicule.getMarqueur(), 0], GRB.EQUAL, 1)
             for pos in self.positionsVehicules[idVehicule][vehicule.getMarqueur()]: #une contrainte les met à 1 automatiquement, pas nécessaire.

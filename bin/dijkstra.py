@@ -4,7 +4,7 @@ import math
 import time
 
 from configuration import *
-from graphe_hm import *
+from graphe import *
 
 class Dijkstra:
     """ """
@@ -34,11 +34,11 @@ class Dijkstra:
         start_time = time.time()
 
         noeudsPoidsMin = Noeud(self.getConfig())
-        noeudsPoidsMin.setHistorique([[self.getConfig(), 0]])
+        noeudsPoidsMin.setHistorique([None, 0, 0])
         self.graphe.addNoeud(noeudsPoidsMin) # ajout du noeud dans le graphe
         self.nonDefinitiveEdges.append(noeudsPoidsMin) # ajout du premier noeud dans B (tant que pas dans la boucle, pas définitif)
 
-        while(not noeudsPoidsMin == None and not Configuration.verifCondition(noeudsPoidsMin.getConfig()) and self.getNbMax() > (len(noeudsPoidsMin.getHistorique())-1)):
+        while(not noeudsPoidsMin == None and not Configuration.verifCondition(noeudsPoidsMin.getConfig()) and self.getNbMax() > noeudsPoidsMin.getProfondeur()):
 
             self.nonDefinitiveEdges.remove(noeudsPoidsMin) # on retire le noeud définitif de B
             self.graphe.constructNoeuds(noeudsPoidsMin, self.nonDefinitiveEdges, flag) # ajout des noeuds inexistants et maj de la taille du chemin
@@ -58,10 +58,15 @@ class Dijkstra:
         print("temps total ---->", round(stop_time - start_time, 2), " sec")
 
         # si on a trouvé une solution
-        if (noeudsPoidsMin is not None) and (self.getNbMax() >= len(noeudsPoidsMin.getHistorique())):
-            listConfig = [noeudsPoidsMin.getHistorique()[i][0] for i in range(len(noeudsPoidsMin.getHistorique()))]
+        if (noeudsPoidsMin is not None) and (self.getNbMax() >= noeudsPoidsMin.getProfondeur()):
+
+            listConfig = [noeudsPoidsMin.getConfig()]
+            while(noeudsPoidsMin.getParent() != None):
+            	noeudsPoidsMin = noeudsPoidsMin.getParent()
+            	listConfig.append(noeudsPoidsMin.getConfig())
+
             listConfig.reverse()
-            return listConfig   # si on a pas trouvé de solution en un nombre de pas < nbMax
+            return listConfig
 
         # si la solution ne peut être trouvé en nombre de pas
         else:
@@ -76,14 +81,11 @@ class Dijkstra:
         return poidsMin, noeudCheminMin
 
 if __name__ == "__main__":
-    conf = Configuration.readFile("../puzzles/débutant/jam2.txt")
+    conf = Configuration.readFile("../puzzles/avancé/jam26.txt")
     dijkstra = Dijkstra(conf, 52, flag = "RHM")
     print(len(dijkstra.getSolution()))
     # dijkstra.launchDijkstra(conf, 35, flag = "RHM")
-    # print("nombre de configurations atteignables en 15 pas -->", Graphe.countConfig(conf, 15))
-
-
-
+    # print("nombre de configurations atteignables en 1 pas -->", Graphe.countConfig(conf, 1))
 
 
 

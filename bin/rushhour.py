@@ -7,6 +7,7 @@
 """
 
 import sys
+import time
 import os
 
 from PyQt5.QtWidgets import (QApplication, QMainWindow, QAction, QDialog, QFileDialog, QToolBar, QWidget, QProgressBar)
@@ -112,8 +113,8 @@ class Window (QMainWindow):
         settingsDialog.exec_()
 
     def startTimer(self):
-        """ Demarre le timer de résolution et affiche sa progression dans la timer bar
-        """
+        """ Demarre le timer de résolution et affiche sa progression dans la timer bar """
+        self.startTime = time.time()
         self.timer.start(1000)
 
     def stopTimer(self):
@@ -123,12 +124,7 @@ class Window (QMainWindow):
 
     def timerEvent(self):
         """ Met a jour la valeur de la progress bar lors de la reception d'un signal du timer """
-        self.progressBar.setValue(self.progressBar.value()+1)
-
-
-        
-        
-
+        self.progressBar.setValue(time.time() - self.startTime)
 
     def fileSelectDialog(self):
         """ Opens a file selection dialog and display on the grid the selected file.
@@ -163,7 +159,7 @@ class TimerBar(QProgressBar):
             self.parent().parent().stopTimer()
             super().setValue(0)
 
-        elif self.value() == self.maximum():
+        elif self.value() >= self.maximum():
             print("fin")
             self.parent().parent().stopTimer()
             super().setValue(0)

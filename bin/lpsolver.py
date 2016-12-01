@@ -8,7 +8,7 @@ from gurobipy import *
 class LPSolver :
     """ Cette classe permet la résolution d'une grille de RushHour par programmation linéaire. """
 
-    def __init__(self, config, nbCoupMax):
+    def __init__(self, config, resolutionProblem, nbCoupMax):
         """ 
             params : config -> configuration initiale de la grille
                      nbCoupMax -> nombre de coups max autorisés pour résoudre la grille
@@ -16,6 +16,8 @@ class LPSolver :
         
         self.config = config 
         self.nbMove = nbCoupMax
+        self.problem = resolutionProblem
+
         self.model = Model()
 
         self.moves = range(self.nbMove+1)
@@ -108,7 +110,7 @@ class LPSolver :
         
         self.model.update()
 
-    def createObjective(self, objectiveType="RHM"):
+    def createObjective(self):
         """ Défini l'objectif du modèle en fonction du type d'objectif passé en paramètre.
             L'objectif est soit de type "RHM", minimisant le nombre de mouvement, soit de type "RHC", minimisant le nombre de case parcourue.
             Params : objectiveType (facultatif) -> le type de l'objectif, étant par défaut sur RHM
@@ -123,11 +125,11 @@ class LPSolver :
                     for l in self.possiblesMarqueurs[idVehicule]: # pour chaque marqueur possible du véhicule différent de j
                         if j != l:
                             # si l'objectif est RHM, le poids de chaque mouvement est de 1, sinon, du nombre de cases de déplacement
-                            coeff = 1 if objectiveType == "RHM" else (len(self.positions2Points[j][l]) - 2) # Ne pas compter les deux points courants. MODIFIER POSITIONS 2 POINTS?
+                            coeff = 1 if self.problem == "RHM" else (len(self.positions2Points[j][l]) - 1) # Ne pas compter les deux points courants. MODIFIER POSITIONS 2 POINTS?
                             objective.addTerms(coeff, self.y[idVehicule, j, l, k])
 
         # pour empêcher à la résolution de trouver que ne pas résoudre le problème est plus optimisé que de le résoudre
-        coeff = self.nbMove if objectiveType == "RHM" else 6*self.nbMove
+        coeff = self.nbMove if self.problem == "RHM" else 6*self.nbMove
 
         # minimisation de l'objectif
         self.model.setObjective(coeff*(1-self.x["g", 16, self.nbMove]) + objective, GRB.MINIMIZE)
@@ -346,8 +348,6 @@ class LPSolver :
                         self.model.addConstr(nbVehiculeMovement, GRB.GREATER_EQUAL, self.x[idVehicule, j, k] - self.x[idVehicule, j, k-1]) # si il n'y a pas de mouvement, pas de changement dans le marqueur
                         #self.model.addConstr(nbVehiculeMovement, GRB.GREATER_EQUAL, self.x[idVehicule, j, k-1] - self.x[idVehicule, j, k])
 
-                    
-
             # si g n'est pas en 16, il y a un mouvement à ce tour
             if k!=0:
                 self.model.addConstr(nbVehiculeMoved - (1-self.x["g", 16, k-1]), GRB.EQUAL, 0) #(6)
@@ -372,6 +372,7 @@ class LPSolver :
                             
 
 if __name__ == "__main__":
-    conf = Configuration.readFile("../puzzles/intermédiaire/jam13.txt")
-    lp = LPSolver(conf, 25)
-    print(lp.positions2Points[0][5])
+    conf = Configuration.readFile("../puzzles/contre_exemple_RHM_RHC.txt")
+    lp = LPSolver(conf, "RHC", 10)
+    print(len(lp.positions2Points[13][16])-1, len(lp.positions2Points[13][14])-1)
+    #print(lp.solve())

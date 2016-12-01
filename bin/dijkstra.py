@@ -11,7 +11,7 @@ from graphe import *
 class Dijkstra:
     """ Cette classe permet la résolution d'une grille de RushHour par l'algorithme de Dijkstra"""
     
-    def __init__(self, config, nbMax, flag = "RHM"):
+    def __init__(self, config, flag, nbMax):
         """ 
         Params : 
             config -> la configuration initiale
@@ -20,9 +20,10 @@ class Dijkstra:
         """
         self.graphe = Graphe()
         self.config = config
+        self.problem = flag
         self.nbMax = nbMax
         self.nonDefinitiveEdges = [] # correspond aux noeuds de chemin non définitif
-        self.solution = self.solve(flag)
+        #self.solution = self.solve()
 
 
     def getConfig(self):
@@ -34,7 +35,7 @@ class Dijkstra:
     def getSolution(self):
         return self.solution
 
-    def solve(self, flag = "RHM"):
+    def solve(self):
         """
             Cette méthode permet la résolution de la grille de RushHour par Dijkstra
             La résolution peut être faite selon RHM ou RHC selon la valeur du flag.
@@ -51,7 +52,7 @@ class Dijkstra:
         while(not noeudsPoidsMin == None and not Configuration.verifCondition(noeudsPoidsMin.getConfig()) and self.getNbMax() > noeudsPoidsMin.getProfondeur()):
 
             self.nonDefinitiveEdges.remove(noeudsPoidsMin) # on retire le noeud définitif de nonDefinitiveEdges
-            self.graphe.constructNoeuds(noeudsPoidsMin, self.nonDefinitiveEdges, flag) # ajout des noeuds inexistants et maj de la taille du chemin
+            self.graphe.constructNoeuds(noeudsPoidsMin, self.nonDefinitiveEdges, self.problem) # ajout des noeuds inexistants et maj de la taille du chemin
 
             # initialisation
             poidsMin = math.inf
@@ -74,8 +75,6 @@ class Dijkstra:
             while(noeudsPoidsMin.getParent() != None):
                 noeudsPoidsMin = noeudsPoidsMin.getParent()
                 listConfig.append(noeudsPoidsMin.getConfig())
-
-            listConfig.reverse()
             return listConfig
 
         # si la solution ne peut être trouvé en nombre de pas
@@ -85,8 +84,8 @@ class Dijkstra:
 
 
 if __name__ == "__main__":
-    conf = Configuration.readFile("../puzzles/débutant/jam1.txt")
-    dijkstra = Dijkstra(conf, 52, flag = "RHM")
+    conf = Configuration.readFile("../puzzles/contre_exemple_RHM_RHC.txt")
+    dijkstra = Dijkstra(conf, "RHC", 52)
     print(len(dijkstra.getSolution()))
     # dijkstra.launchDijkstra(conf, 35, flag = "RHM")
     # print("nombre de configurations atteignables en 1 pas -->", Graphe.countConfig(conf, 1))

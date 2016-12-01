@@ -12,34 +12,34 @@ class Dijkstra:
     """ Cette classe permet la résolution d'une grille de RushHour par l'algorithme de Dijkstra"""
     
     def __init__(self, config, flag, nbMax):
-        """ 
-        Params : 
-            config -> la configuration initiale
-            nbMax -> le nombre maximum de déplacements autorisés
-            flag (facultatif) -> objectif de résolution, par défaut sur RHM
+        """ Initialise l'ensemble des paramètres nécessaire à l'algorithme de Dijkstra 
+            Params : 
+                config -> la configuration initiale
+                nbMax -> le nombre maximum de déplacements autorisés
+                flag (facultatif) -> objectif de résolution, par défaut sur RHM
         """
         self.graphe = Graphe()
         self.config = config
         self.problem = flag
         self.nbMax = nbMax
         self.nonDefinitiveEdges = [] # correspond aux noeuds de chemin non définitif
-        #self.solution = self.solve()
 
 
     def getConfig(self):
+        """ Retourne la configuration """
         return self.config
 
     def getNbMax(self):
+        """ Retourne le nombre de mouvement maximum """
         return self.nbMax
 
     def getSolution(self):
+        """ Retourne la solution trouvée par l'algorithme """
         return self.solution
 
     def solve(self):
-        """
-            Cette méthode permet la résolution de la grille de RushHour par Dijkstra
-            La résolution peut être faite selon RHM ou RHC selon la valeur du flag.
-            Params : flag(facultatif) -> objectif de résolution, par défaut sur RHM
+        """ Cette méthode permet la résolution de la grille de RushHour par Dijkstra
+            La résolution peut être faite selon RHM ou RHC selon la valeur de l'attribut self.problem
             Return : liste des configurations permettant de résoudre la grille de RushHour
         """
         start_time = time.time()

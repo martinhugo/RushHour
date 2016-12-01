@@ -1,22 +1,18 @@
 # -*- coding: utf-8 -*-
 
 import math
-import time
 from configuration import *
 
 
 
 
-
-
-
-
-
 class Noeud:
-	""" Cette classe permet la création d'un noeud, avec un historique, un identifiant unique et une configuration"""
+	""" Permet la création d'un noeud, avec un historique, un identifiant unique et une configuration"""
 
 	def __init__(self, config):
-		""" Params : config -> correspond à la configuration du noeud"""
+		""" Initialise les paramètres config, id et historique.
+			Params : config -> correspond à la configuration du noeud
+		"""
 		self.config = config
 		self.id = str(config)
 		self.historique = [None, None, None] # se présente sous la forme [pere, taille du chemin, profondeur]
@@ -86,10 +82,12 @@ class Noeud:
 
 
 	def getProfondeur(self):
+		""" Retourne la profondeur parcourue jusqu'au noeud initial """
 		return self.historique[2]
 
 
 	def setProfondeur(self, longueurChemin):
+		""" Modifie la profondeur (self.historique[2]) avec la valeur longueurChemin """
 		self.historique[2] = longueurChemin
 
 
@@ -116,15 +114,17 @@ class Noeud:
 
 
 class Graphe:
-	""" Cette classe permet la création d'un graphe contenant une liste de noeuds"""
+	""" Cette classe permet la création d'un graphe contenant une liste de noeuds mise à jour au cours de l'algorithme de Dijkstra """
 
 	def __init__(self):
-		""" Params : None"""
+		""" Initialise les noeuds à une liste vide
+			Params : None
+		"""
 		self.noeuds = []
 
 
 	def getNoeuds(self):
-		""" retourne la liste des noeuds du graphe"""
+		""" Retourne la liste des noeuds du graphe"""
 		return self.noeuds
 
 
@@ -146,6 +146,7 @@ class Graphe:
 
 		movements = noeud.getConfig().getPossibleMovements()
 		poids = 1
+
 		# pour chaque véhicule, pour chaque position possible du véhicule
 		for vehicle in movements.keys():
 
@@ -155,9 +156,11 @@ class Graphe:
 
 			for marqueur in movements[vehicle]:
 
+				# distance avec la configuration suivante
 				if(flag != "RHM"):
 					poids = abs(marqueurVehicle - marqueur)/orientationVehicle
 
+				# Création/Modification de la configuration considérée
 				currentEdge = self.verifNoeudInGraphe(Noeud(Configuration.newConfig(noeud.getConfig(), vehicle, marqueur)))
 
 				if(currentEdge.getProfondeur() == None): # si le noeud n'a jamais été crée
@@ -170,8 +173,8 @@ class Graphe:
 
 
 	def constructNoeud(self, noeudDefinitif, noeudToAdd, nonDefinitveEdges, poids):
-		""" ajoute le noeud et l'arête correspondant dans le graphe
-			Params : noeudDefinitif auquel relier le noeud à créer
+		""" ajoute le noeud correspondant dans le graphe
+			Params : noeudDefinitif noeud auquel relier le noeud à créer
 					 noeudToAdd : le noeud à ajouter au graphe
 					 nonDefinitifEdges : liste de noeuds dont le chemin min n'est pas encore définitif
 					 poids : poids du chemin du noeud définitif au noeud à ajouter

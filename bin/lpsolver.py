@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-
+import time
 from configuration import *
 from configuration import *
 from gurobipy import *
@@ -32,8 +32,9 @@ class LPSolver :
 
     def solve(self):
         """ Demande la résolution du modèle et écrit l'ensemble des variables valeurs de y[i][j][k][l] dans le fichier de chemin path """
-        
+        start_time = time.time()
         self.model.optimize()
+        print(time.time() - start_time)
         return self.createConfigurations()
 
     def createConfigurations(self):
@@ -337,16 +338,19 @@ class LPSolver :
 
                                         self.model.addConstr(self.y[idVehicule, j, l, k], GRB.LESS_EQUAL, (1-nbVehiculeBetween)) # UTILE(4)
 
+                        ## Les mouvements doivent partir d'une position valide
                         self.model.addConstr(nbMovementFromJ - self.x[idVehicule, j, k-1], GRB.LESS_EQUAL, 0) # mouvement doivent partir d'une position valide
+                        ## Les marqueurs sont mis à jour lorsqu'un mouvement arrive dans une position
                         self.model.addConstr(nbMovementToJ - self.x[idVehicule, j, k], GRB.LESS_EQUAL, 0) # mouvement arrive et mise à jour, nécessaire
                     
-                # un véhicule a son marqueur en une position à chaque tour
+                ## Un véhicule a son marqueur en une position à chaque tour
                 self.model.addConstr(nbVehiculePosition, GRB.EQUAL, 1)
                 
                 if k!=0:
                     for j in self.possiblesMarqueurs[idVehicule]:
-                        self.model.addConstr(nbVehiculeMovement, GRB.GREATER_EQUAL, self.x[idVehicule, j, k] - self.x[idVehicule, j, k-1]) # si il n'y a pas de mouvement, pas de changement dans le marqueur
-                        #self.model.addConstr(nbVehiculeMovement, GRB.GREATER_EQUAL, self.x[idVehicule, j, k-1] - self.x[idVehicule, j, k])
+                        ## si il n'y a pas de mouvement, pas de changement dans le marqueur d'un véhicule
+                        self.model.addConstr(nbVehiculeMovement, GRB.GREATER_EQUAL, self.x[idVehicule, j, k] - self.x[idVehicule, j, k-1]) 
+                        #self.model.addConstr(nbVehiculeMovement, GRB.GREATER_EQUAL, self.x[idVehicule, j, k-1] - self.x[idVehicule, j, k]) Inutile dans notre conception
 
             # si g n'est pas en 16, il y a un mouvement à ce tour
             if k!=0:
@@ -372,7 +376,9 @@ class LPSolver :
                             
 
 if __name__ == "__main__":
-    conf = Configuration.readFile("../puzzles/contre_exemple_RHM_RHC.txt")
-    lp = LPSolver(conf, "RHC", 10)
-    print(len(lp.positions2Points[13][16])-1, len(lp.positions2Points[13][14])-1)
-    #print(lp.solve())
+    conf = Configuration.readFile("../puzzles/avancé/jam26.txt")
+
+    lp = LPSolver(conf, "RHC", 31)
+    #print(len(lp.positions2Points[13][16])-1, len(lp.positions2Points[13][14])-1)
+
+    lp.solve()

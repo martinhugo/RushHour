@@ -1,7 +1,7 @@
 #/usr/bin/python3
 # -*- coding:utf-8 -*-
 
-""" Module containing the Dialog boxes for the GooDoc Application.
+""" Module contenant les fenetres utilisées dans le projet Rush Hour
 """
 
 from PyQt5.QtWidgets import (QDialog, QVBoxLayout, QRadioButton, QGroupBox, QDialogButtonBox, QLineEdit, QProgressBar)
@@ -10,40 +10,25 @@ from controller import *
 
 
 class SettingsDialog(QDialog):
-    """ Inherits: QDialog
-        This class defines a dialog box.
-        This dialog box is composed of two radio buttons, which let the user choose the order of methods and classes in the generated documentation.
-    """
+    """ Classe permettant de paramètrer la résolution de la configuration courante. """
 
     def __init__(self, parent=None):
-        """ Constructor
-            Params: parent -> the object's parent
+        """ Params: parent -> le parent de l'objet (géré automatiquement par PyQt)
             Return: self
-            The object is initialized with the super-constructror, the GUI with the initUI method.
+            Initialisation de la fenetre Paramètre
         """
         super().__init__(parent)
         self.initUI()
 
 
     def initUI(self):
-        """ Object method
-            Params: None
-            Return: None
-            This method sets the dialog box's layout.
-            The Dialog box conatains two radio buttons and OK/Cancel buttons.
-            sizeHint() sets the box to an ideal size.
-        """
+        """ Met en forme la fenetre de dialogue, créé l'ensemble des boutons et labels permettant de paramètrer la résolution d'une grille. """
 
-        #creating layout
+
         settings_layout = QVBoxLayout();
-
-        
-
         self.nbMoveMax = QLineEdit()
 
-        #creating the buttons
         buttons = QDialogButtonBox();
-
         #creating OK button and connecting it to the dialog
         buttons.addButton(QDialogButtonBox.Ok)
         buttons.accepted.connect(self.accept)
@@ -67,7 +52,9 @@ class SettingsDialog(QDialog):
 
 
     def getRadioButtonLayout(self):
-
+        """ Méthode permettant de  creer l'ensemble des radio buttons nécessaire à la fenetre.
+            Return: groupType, groupProblem les GroupBox contenant les boutons radios permettant de choisir le type et le problème (RHC/RHM) de la résolution
+        """
         #creating Radio buttons
         self.treeButton = QRadioButton(ResolutionType.TREE_RESOLUTION, self);
         self.linearProgrammingButton = QRadioButton(ResolutionType.LINEAR_PROGRAMMING, self);
@@ -89,11 +76,8 @@ class SettingsDialog(QDialog):
         return groupType, groupProblem
        
     def exec_(self):
-        """ Object method.
-            Params: None.
-            Return: None.
-            This method displays the window and launches its event loop. 
-            Changes are commited when the OK button is pressed.
+        """ Affiche la fenetre et lance la boucle evenementielle
+            Les changements sont confirmées seulement si le bouton ok est pressée
         """ 
         # If changes was confirmed
         if(super().exec_()):

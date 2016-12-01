@@ -2,20 +2,22 @@
 
 from vehicule import *
 import math
-from listTools import *
 from copy import deepcopy, copy
 import time
+
+
 """ Contient l'ensemble des classes et types nécessaire à la representation d'une configuration dans le jeu RushHour. """
 
-
-
-
-
-
-
 class Configuration:
+    """ Classe permettant de representer une configuration dans l'application Rush Hour 
+        l'attribut véhicules est une liste d'objet véhicule.
+        l'attribut configuration est un liste de 36 élément ou chaque case, accessible en temps constant, représente une case de la configuration.
+    """
 
     def __init__(self, vehicules = [], nbCoupMax = 0):
+        """ initialise la liste de véhicule et construit les attributs vehicules et configuration 
+            Généralement le dictionnaire n'est pas appelé directement est les objets configuration sont crées depuis la méthode readFile
+        """
         self.vehicules = list(vehicules)
         self.constructConfiguration()
         self.nbCoupMax = nbCoupMax
@@ -27,7 +29,9 @@ class Configuration:
 
 
     def setConfiguration(self, config):
-        """ utilisé dans le cas de Dijkstra pour la création des noeuds"""
+        """ permet de modifier le tableau configuration
+            utilisé dans le cas de Dijkstra pour la création des noeuds
+        """
         self.configuration = config
         
 
@@ -56,8 +60,8 @@ class Configuration:
 
 
     def constructConfiguration(self):
-        """ Construit la configuration de base, initialise l'attribut configuration en fonction de l'attribut véhicule.
-            Cette méthode permet de creer un tableau de taille 36 représentant la grille 
+        """ Construit la configuration de base, initialise l'attribut configuration en fonction de l'attribut véhicules.
+            Cette méthode permet de creer un tableau de taille 36 représentant la grille à résoudre et permettant un temps d'accès constant aux éléments
         """
         configuration = [0 for i in range(36)]
         for vehicule in self.vehicules:

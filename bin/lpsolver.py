@@ -6,13 +6,13 @@ from gurobipy import *
 
 
 class LPSolver :
-	""" Cette classe permet la résolution d'une grille de RushHour par programmation linéaire. """
+    """ Cette classe permet la résolution d'une grille de RushHour par programmation linéaire. """
 
     def __init__(self, config, nbCoupMax):
-    	""" 
-    		params : config -> configuration initiale de la grille
-    				 nbCoupMax -> nombre de coups max autorisés pour résoudre la grille
-    	"""
+        """ 
+            params : config -> configuration initiale de la grille
+                     nbCoupMax -> nombre de coups max autorisés pour résoudre la grille
+        """
         
         self.config = config 
         self.nbMove = nbCoupMax
@@ -35,10 +35,10 @@ class LPSolver :
         return self.createConfigurations()
 
     def createConfigurations(self):
-    	""" cette fonction créé l'ensemble des configurations, de la configuration initiale à la configuration finale
-    		Params : None
-    		Return : la liste des configurations de la configuration initiale à la configuration finale 
-    		qui propose une solution optimale du problème
+        """ cette fonction créé l'ensemble des configurations, de la configuration initiale à la configuration finale
+            Params : None
+            Return : la liste des configurations de la configuration initiale à la configuration finale 
+            qui propose une solution optimale du problème
         """ 
 
         config = self.config
@@ -67,8 +67,8 @@ class LPSolver :
     def initArrays(self):
         """ Initialise l'ensemble des tableaux et matrices nécessaires à l'établissement des variables, 
         contraintes et de la fonction objectif 
-        	Params : None
-        	Return : None
+            Params : None
+            Return : None
         """
         self.initIdVehiculesList()
         self.initPossiblesPositions() # créé x, y, z et les initialise selon la configuration passée en param
@@ -81,8 +81,8 @@ class LPSolver :
     def createDecisionsVariables(self):
         """ Créé l'ensemble des variables de décisions nécessaires à la résolution du problème.
             Les variables sont contenues dans des dictionnaires x, y, et z conformément aux notations de l'énoncé.
-       		Params : None
-       		Return : None
+            Params : None
+            Return : None
         """
         self.x, self.y, self.z = {}, {}, {}
 
@@ -98,12 +98,12 @@ class LPSolver :
                     for l in self.possiblesMarqueurs[idVehicule]: # pour chaque marqueur différent de j
                         if j!=l:
 
-                        	# variable de décision indiquant si le véhicule est passé de la position j à la position l au terme de la k-eme étape
+                            # variable de décision indiquant si le véhicule est passé de la position j à la position l au terme de la k-eme étape
                             self.y[idVehicule, j, l, k] = self.model.addVar(0, 1, vtype=GRB.BINARY)
 
                 for j in self.possiblesPositions[idVehicule]:
 
-                	# variable de décision indiquant si le véhicule occupe la position j au terme de la k-eme étape
+                    # variable de décision indiquant si le véhicule occupe la position j au terme de la k-eme étape
                     self.z[idVehicule, j, k] = self.model.addVar(0, 1, vtype=GRB.BINARY)
         
         self.model.update()
@@ -111,8 +111,8 @@ class LPSolver :
     def createObjective(self, objectiveType="RHM"):
         """ Défini l'objectif du modèle en fonction du type d'objectif passé en paramètre.
             L'objectif est soit de type "RHM", minimisant le nombre de mouvement, soit de type "RHC", minimisant le nombre de case parcourue.
-        	Params : objectiveType (facultatif) -> le type de l'objectif, étant par défaut sur RHM
-        	Return : None
+            Params : objectiveType (facultatif) -> le type de l'objectif, étant par défaut sur RHM
+            Return : None
         """
 
         objective = LinExpr()
@@ -122,8 +122,8 @@ class LPSolver :
                 for j in self.possiblesMarqueurs[idVehicule]: # pour chaque marqueur possible j du véhicule 
                     for l in self.possiblesMarqueurs[idVehicule]: # pour chaque marqueur possible du véhicule différent de j
                         if j != l:
-                        	# si l'objectif est RHM, le poids de chaque mouvement est de 1, sinon, du nombre de cases de déplacement
-                            coeff = 1 if objectiveType == "RHM" else len(self.positions2Points[j][l])
+                            # si l'objectif est RHM, le poids de chaque mouvement est de 1, sinon, du nombre de cases de déplacement
+                            coeff = 1 if objectiveType == "RHM" else (len(self.positions2Points[j][l]) - 2) # Ne pas compter les deux points courants. MODIFIER POSITIONS 2 POINTS?
                             objective.addTerms(coeff, self.y[idVehicule, j, l, k])
 
         # pour empêcher à la résolution de trouver que ne pas résoudre le problème est plus optimisé que de le résoudre
@@ -136,8 +136,8 @@ class LPSolver :
 
     def createConstraints(self):
         """ Appelle l'ensemble des méthodes permettant la création de l'ensemble des contraintes nécéssaire à la résolution de la configuration RushHour 
-        	Params : None
-        	Return : None
+            Params : None
+            Return : None
         """
 
         self.addInitialisationConstraints() # contraintes d'initialisations
@@ -152,15 +152,15 @@ class LPSolver :
     
     def initIdVehiculesList(self):
         """ Créé la liste des ids de véhicules 
-        	Params : None
-        	Return : None
+            Params : None
+            Return : None
         """ 
         self.idVehiculesList = [vehicule.getIdVehicule() for vehicule in self.config.getVehicules()]
 
     def initPossiblesPositions(self):
         """ Créé une liste des positions possibles que peut prendre chaque véhicule 
-        	Params : None
-        	Return : None
+            Params : None
+            Return : None
         """
         self.possiblesPositions = {}
         self.possiblesMarqueurs = {}
@@ -189,16 +189,16 @@ class LPSolver :
 
     def getLongueurs(self):
         """ Renvoie la longueur de tous les véhicules de config
-        	Params :None
-        	Return : le dictionnaire associant à chaque véhicule sa taille
+            Params :None
+            Return : le dictionnaire associant à chaque véhicule sa taille
         """
         return self.longueurs
 
 
     def initPositionsVehicules(self):
         """ défini toutes les cases occupées pour chaque véhicule et pour chaque case occupée par ce véhicule
-        	Params : None
-        	Return : None
+            Params : None
+            Return : None
         """
         self.positionsVehicules = {}
         for vehicle in self.config.getVehicules(): # pour chque véhicule
@@ -219,14 +219,14 @@ class LPSolver :
 
     def getPositionsVehicules(self):
         """ Renvoie la liste de toutes les cases occupées pour un véhicule et une case donnée 
-        	Params : None
-        	Return : le dictionnaire associant l'ensemble des véhicules à l'ensemble des cases occupées par ce véhicule pour une case donnée"""
+            Params : None
+            Return : le dictionnaire associant l'ensemble des véhicules à l'ensemble des cases occupées par ce véhicule pour une case donnée"""
         return self.positionsVehicules
 
     def initPositions2Points(self):
         """ Défini la matrice p[][] qui contient pour tout i,j l'ensemble des positions entre ces deux marqueurs.
             Params : None
-        	Return : None
+            Return : None
         """
         self.positions2Points = []
         for i in range(36): # pour chaque position i de la grille
@@ -256,8 +256,8 @@ class LPSolver :
 
     def getPositions2Points(self):
         """ retourne un tableau (i, j) qui est l'ensemble des positions comprises entre j et l.
-        	Params : None
-        	Return : un tableau 2D indiquant pour chaque (i, j) l'ensemble des positions entre ces deux points
+            Params : None
+            Return : un tableau 2D indiquant pour chaque (i, j) l'ensemble des positions entre ces deux points
         """
         return self.positions2Points
 
@@ -374,4 +374,4 @@ class LPSolver :
 if __name__ == "__main__":
     conf = Configuration.readFile("../puzzles/intermédiaire/jam13.txt")
     lp = LPSolver(conf, 25)
-    print(lp.solve())
+    print(lp.positions2Points[0][5])
